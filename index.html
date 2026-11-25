@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiches ID B2S</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: outil de travail d'une équipe événementielle, net et chaleureux.
+   IDEA: chaque fiche est un pass / billet d'événement, avec sa souche perforée.
+   PICTURE: le billet en tête de fiche, avec l'avancement par pôle et les alertes.
+   COLOUR: une couleur douce par pôle (bleus, verts, rose poudré), cases à remplir jaune pâle.
+   TYPE: DM Sans. LAYOUT: liste des fiches puis fiche à onglets, une colonne calme. */
+:root{color-scheme:light;
+ --bg:light-dark(#F3F5F8,#0E151C);--card:light-dark(#FFFFFF,#16202A);--ink:light-dark(#18222E,#E6ECF2);
+ --mute:light-dark(#5B6878,#97A6B5);--line:light-dark(#DCE2E9,#263342);--in:light-dark(#FFF7D6,#2A2717);
+ --in-b:light-dark(#EADFAE,#4A4426);--auto:light-dark(#EEF1F5,#1C2733);--acc:#1E3A5F;
+ --ok:light-dark(#DCFCE7,#12351F);--okt:light-dark(#166534,#86EFAC);--mid:light-dark(#FEF3C7,#3A2E0C);--midt:light-dark(#92400E,#FCD34D);
+ --bad:light-dark(#FEE2E2,#3B1515);--badt:light-dark(#991B1B,#FCA5A5);--na:light-dark(#F1F3F5,#1B232C);--nat:light-dark(#6B7280,#8A97A5)}
+:root,:root[data-theme=light],:root[data-theme=dark]{color-scheme:light}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif;overflow-x:clip}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:20px max(4vw,14px) 60px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.top h1{font-size:22px;margin:0;flex:1}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 14px;min-height:44px;cursor:pointer;font-weight:600}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--badt)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.tab:focus-visible,.chip:focus-visible{outline:3px solid #7FA7D6;outline-offset:2px}
+.banner{padding:12px 14px;border-radius:10px;background:var(--mid);color:var(--midt);margin-bottom:14px;font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
+.ev{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;text-align:left;display:grid;gap:8px;position:relative;overflow:hidden}
+.ev::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--acc)}
+.ev h3{margin:0;font-size:19px;line-height:1.2}
+.ev .meta{color:var(--mute);font-size:14px}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--mute)}
+/* billet */
+.ticket{display:grid;grid-template-columns:minmax(0,1fr) 220px;background:var(--acc);color:#fff;border-radius:18px;position:relative;margin-bottom:16px}
+.ticket .main{padding:22px 24px}
+.ticket .stub{padding:20px;border-left:2px dashed rgba(255,255,255,.35);display:grid;align-content:center;justify-items:center;gap:6px;text-align:center}
+.ticket::before,.ticket::after{content:"";position:absolute;right:209px;width:22px;height:22px;border-radius:50%;background:var(--bg)}
+.ticket::before{top:-11px}.ticket::after{bottom:-11px}
+.ticket h2{font-size:clamp(28px,4vw,42px);line-height:1.05;margin:0 0 10px;text-wrap:balance}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{background:rgba(255,255,255,.14);border-radius:999px;padding:5px 12px;font-size:14px;white-space:nowrap}
+.big{font-size:44px;font-weight:700;line-height:1}
+.status{background:#fff;color:var(--acc);border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px}
+.bars{display:grid;gap:5px;margin-top:14px}
+.bar{display:grid;grid-template-columns:120px minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:13px}
+.bar i{display:block;height:8px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
+.bar b{display:block;height:100%;border-radius:9px;background:#fff}
+.alerts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.alert{background:var(--bad);color:var(--badt);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:600}
+.alert.okk{background:var(--ok);color:var(--okt)}
+.bar-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center}
+.saved{color:var(--mute);font-size:13px;margin-left:auto}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:thin}
+.tab{flex:none;border:0;border-radius:10px 10px 0 0;padding:10px 16px;min-height:44px;cursor:pointer;background:var(--card);color:var(--mute);font-weight:600;border-bottom:3px solid transparent}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--tc)}
+.block{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+.block>h3{margin:0;padding:12px 16px;font-size:16px;background:var(--tc);color:#fff;display:flex;gap:10px;align-items:center}
+.block>h3 small{font-weight:400;opacity:.85;font-size:13px}
+.bnote{padding:8px 16px 0;color:var(--mute);font-size:13px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:10px 18px;padding:14px 16px}
+.fld{display:grid;gap:4px}
+.fld label{font-size:13px;font-weight:600;color:var(--mute)}
+.fld.wide{grid-column:1/-1}
+input,select,textarea{width:100%;background:var(--in);border:1px solid var(--in-b);border-radius:8px;padding:9px 10px;min-height:44px;font-size:16px}
+textarea{min-height:70px;resize:vertical}
+.auto{background:var(--auto);border-radius:8px;padding:10px;min-height:44px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;min-height:40px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ok);color:var(--okt);border-color:transparent;font-weight:700}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--mute);font-weight:700;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+td input,td select{min-height:38px;padding:6px 8px;font-size:15px}
+td.calc{background:var(--auto);font-weight:600;white-space:nowrap;border-radius:6px}
+td.rm{width:40px}
+.x{border:0;background:transparent;color:var(--mute);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px}
+.addrow{margin:10px 16px 14px}
+.c-ok{background:var(--ok)!important;color:var(--okt)!important;font-weight:700}
+.c-mid{background:var(--mid)!important;color:var(--midt)!important;font-weight:700}
+.c-bad{background:var(--bad)!important;color:var(--badt)!important;font-weight:700}
+.c-na{background:var(--na)!important;color:var(--nat)!important}
+.n1{background:#DC2626!important;color:#fff!important}.n2{background:#F97316!important;color:#fff!important}
+.n3{background:#FACC15!important;color:#000!important}.n4{background:#4ADE80!important;color:#000!important}.n5{background:#15803D!important;color:#fff!important}
+.legend{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px 0;font-size:12px}
+.legend span{padding:3px 9px;border-radius:999px;font-weight:700}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:8px;padding:14px 16px}
+.mod{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-height:48px;cursor:pointer;background:var(--card);text-align:left}
+.mod b{font-size:12px;padding:3px 10px;border-radius:999px}
+.mod[aria-pressed=true] b{background:var(--ok);color:var(--okt)}
+.mod[aria-pressed=false] b{background:var(--na);color:var(--nat)}
+.plist{padding:10px 16px 14px;display:grid;gap:6px}
+.plist div{display:flex;justify-content:space-between;gap:10px;background:var(--auto);border-radius:8px;padding:8px 12px}
+.confirm{display:inline-flex;gap:8px;align-items:center}
+.folder{padding-top:22px;background:var(--card)}
+.folder::before{background:#E0B84F}
+.tabcut{position:absolute;top:0;left:22px;width:90px;height:10px;background:#E0B84F;border-radius:0 0 8px 8px}
+.kicker{font-size:13px;letter-spacing:.02em;opacity:.8;margin-bottom:4px}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px}
+.mrow>input:not([type=checkbox]):not([type=color]){flex:1 1 200px}
+.mrow>select{flex:0 1 170px;width:auto}
+.mrow .wide-in{flex:2 1 260px}
+.mchk{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--mute);min-height:44px}
+.mtools{display:flex;gap:2px;margin-left:auto}
+.mlist{padding:4px 0 12px}
+.mlist>.mrow{padding:4px 16px;border-top:1px solid var(--line)}
+.mlist>textarea{margin:0 16px;width:calc(100% - 32px)}
+.mhead{padding:8px 16px 4px;font-size:13px;font-weight:700;color:var(--mute)}
+.btn:disabled{opacity:.5;cursor:default}
+.small{font-size:13px;color:var(--mute)}
+@media(max-width:700px){.ticket{grid-template-columns:1fr}.ticket .stub{border-left:0;border-top:2px dashed rgba(255,255,255,.35)}.ticket::before,.ticket::after{display:none}.bar{grid-template-columns:96px minmax(0,1fr) 40px}}
+@media(max-width:700px){
+ .wrap{padding:14px 12px 48px}
+ .top h1{font-size:20px;flex-basis:100%}
+ .top .btn,.bar-actions .btn{flex:1 1 auto;padding:9px 10px;font-size:15px}
+ .bar-actions .saved{flex-basis:100%;margin-left:0}
+ .bar-actions label{flex-basis:100%}
+ .bar-actions select{flex:1}
+ .ticket .main{padding:18px 16px}
+ .ticket .stub{grid-auto-flow:column;justify-content:space-between;align-items:center;padding:12px 16px}
+ .big{font-size:32px}
+ .block>h3{font-size:15px;padding:11px 14px}
+ .fields{padding:12px 14px}
+ .tw{overflow:visible}
+ table.stack,table.stack tbody{display:block;width:100%}
+ table.stack thead{display:none}
+ table.stack tr{display:grid;gap:6px;margin:10px 12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card);position:relative}
+ table.stack td{display:grid;grid-template-columns:7.5em minmax(0,1fr);align-items:center;gap:8px;border:0;padding:0}
+ table.stack td::before{content:attr(data-l);font-size:12px;font-weight:700;color:var(--mute)}
+ table.stack td.calc{background:transparent;padding:0}
+ table.stack td.calc:not(:empty){font-weight:700}
+ table.stack td.rm{position:absolute;top:4px;right:4px;display:block}
+ table.stack td.rm::before{content:none}
+ table.stack tr:has(td.rm) td:first-child{padding-right:34px}
+ .addrow{margin:4px 12px 14px;width:calc(100% - 24px)}
+ .mrow>select,.mrow>input{flex:1 1 100%}
+ .mtools{margin-left:0}
+ .alerts .alert{font-size:13px}
+ .cards{gap:10px}
+}
+@media(prefers-reduced-motion:no-preference){.ev{transition:transform .15s}.ev:hover{transform:translateY(-2px)}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+ <div class="top"><h1>Fiches ID</h1></div>
+ <p class="small">Chargement…</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script>
+{
+const TEAM=["Confirmé","En discussion","En recherche","Pas nécessaire"];
+const YN=["Oui","Non"];
+const OBJ=["Rentabilité","Notoriété de la marque","Fédérer la communauté","Lancer un nouveau concept","Fidéliser le public","Attirer des partenaires","Visibilité / contenus réseaux"];
+const LIEU=["Discothèque / club","Salle de réception","Bar / lounge","Rooftop","Villa avec piscine","Plein air / parc","Péniche","Restaurant","Lieu atypique","Autre"];
+const EQ=["OK lieu","À prévoir","Souhaité","Pas besoin"];
+const PLATS=["Bizouk","Billetweb","Shotgun","Weezevent","Dice","Autre"];
+const R=a=>a.map(x=>typeof x==="string"?{_:x}:x);
+const DEFAULT_SCHEMA=[
+{id:"identite",t:"Identité",c:"#1E3A5F",blocks:[
+ {id:"carte",t:"Carte d'identité",fields:[["nom","Nom du concept"],["date","Date","date"],["hdeb","Heure de début","time"],["hfin","Heure de fin","time"],["cap","Capacité max","number"],["age","Public : âge","select",["18 ans et +","18-25","25-35","35-45","Tous âges"]],["profil","Public : profil","area"],["porteur","Porteur du projet"],["force","Forcer le statut","select",["Annulé","En pause","Terminé"]]]},
+ {id:"conc",t:"Concept & objectifs",fields:[["concept","Concept (1 à 2 phrases)","area"],["adn","ADN en 3 mots"],["obj1","Objectif principal","select",OBJ],["obj2","Objectif secondaire","select",OBJ]]},
+ {id:"modules",t:"Modules de la fiche",special:"modules"}]},
+{id:"production",t:"Production",c:"#2F5D8A",blocks:[
+ {id:"b2s",t:"Équipe B2S",table:{cols:[["role","Rôle"],["nom","Nom"],["statut","Statut","select",TEAM],["tel","Téléphone"]],rows:["Chef·fe de projet","Coordination / production","Direction artistique","Programmation","Communication","Logistique / opérationnel","Régie"].map(x=>({role:x}))}},
+ {id:"concept_team",mod:"concept",t:"Équipe concept",table:{cols:[["role","Rôle"],["nom","Nom"],["statut","Statut","select",TEAM],["tel","Téléphone"]],rows:[{role:"Concept manager"}]}},
+ {id:"retro",t:"Rétroplanning",note:"La deadline se calcule avec la date de l'événement et le « J- ».",table:{cols:[["phase","Phase","select",["Conception","Préparation","Lancement","Dernière ligne droite","Jour J","Après"]],["etape","Étape"],["resp","Responsable"],["j","J-","number"],["dl","Deadline","calc"],["statut","Statut","select",["À faire","En cours","Terminé","Bloqué"]]],rows:[
+  ["Conception","Concept + ADN validés",120],["Conception","Équipe concept constituée",110],["Conception","Budget prévisionnel validé",100],["Conception","Lieu trouvé",90],["Conception","Date verrouillée",90],
+  ["Préparation","Contrat de location signé",75],["Préparation","Partenaires démarchés",60],["Préparation","Line-up confirmé",60],["Préparation","Charte + affiche prêtes",50],["Préparation","Contrats artistes / DJ signés",50],["Préparation","Prestataires réservés",40],
+  ["Lancement","Lancement de la com",45],["Lancement","Ouverture de la billetterie",45],["Lancement","Annonce du line-up",35],["Lancement","Partenaires signés",30],
+  ["Dernière ligne droite","Autorisations obtenues",21],["Dernière ligne droite","Staff complet",14],["Dernière ligne droite","Brief staff",3],["Dernière ligne droite","Point final logistique",2],
+  ["Jour J","Montage",0],["Jour J","Événement",0],["Après","Débrief équipe",-7],["Après","Bilan rempli",-14]].map(([p,e,j])=>({phase:p,etape:e,j:String(j)}))}},
+ {id:"admin",mod:"admin",t:"Administratif & légal",table:{cols:[["doc","Document / démarche"],["conc","Concerné ?","select",["Oui","N/A"]],["qui","Qui s'en occupe"],["dl","Deadline","date"],["statut","Statut","select",["À faire","En cours","Fait"]]],rows:["Contrat du lieu","Contrats artistes","Contrats DJ","Contrats / déclarations du staff","Licence alcool","Autorisations (mairie ou autre)"].map(x=>({doc:x}))}}]},
+{id:"prog",t:"Prog",c:"#2E7D6B",blocks:[
+ {id:"lieu",t:"Lieu",fields:[["lstat","Statut du lieu","select",["Trouvé","En négociation","À rechercher"]],
+  ["lnom","Nom du lieu",0,0,"found"],["ladr","Adresse",0,0,"found"],["lville","Ville",0,0,"found"],["ltype","Type de lieu","select",LIEU,"found"],["lcap","Capacité officielle","number",0,"found"],["lfin","Heure de fin autorisée","time",0,"found"],["lcontact","Contact du lieu",0,0,"found"],["lpart","Particularités","area",0,"found"],
+  ["rzone","Zone recherchée","select",["Paris","Petite couronne (92-93-94)","Grande couronne (77-78-91-95)","Province","Antilles / Outre-mer","Autre"],"search"],["rprec","Précision (ex : 30 min de Paris, proche RER)",0,0,"search"],["rtype","Type de lieu recherché","select",LIEU,"search"],["rbud","Budget location max (€)","number",0,"search"],["rfin","Heure de fin souhaitée","time",0,"search"],["rdl","Date limite pour trouver","date",0,"search"]]},
+ {id:"equip",t:"Équipements",note:"OK lieu = le lieu l'a · À prévoir = on s'en occupe.",table:{cols:[["eq","Équipement"],["st","Statut","select",EQ]],rows:["Son","Lumière","Scène / DJ booth","Bar","Licence alcool","Vestiaire","Cuisine / espace food","Espace extérieur","Parking","Loges artistes","Accès PMR","Sécurité"].map(x=>({eq:x}))}},
+ {id:"art",t:"Artistique",fields:[["style","Style principal","select",["Afro-caribéen","Bouyon","Shatta","Dancehall","Afro","Kompa","Zouk","Rap","Open format","Autre"]],["noto","Notoriété visée","select",["Local","Émergent","Confirmé","Tête d'affiche","Mix"]],["bart","Budget artistique max (€)","number"]]},
+ {id:"lineup",t:"Line-up",table:{cols:[["nom","Nom"],["type","Type","select",["DJ","Artiste","MC","Danseuse / danseur","Performeur","Animation"]],["deb","Début","time"],["fin","Fin","time"],["statut","Statut","select",["Contacté","Négociation","Confirmé","Contrat signé","Annulé"]],["note","Note"]],rows:[]}},
+ {id:"anim",mod:"anim",t:"Animations",table:{cols:[["anim","Animation"],["prevu","Prévu ?","select",YN],["cren","Créneau / note"]],rows:["Showcase","DJ sets","Battle / concours","Jeux / animations public","Danseurs","Canon à mousse","Feux d'artifice / étincelles","Photobooth"].map(x=>({anim:x}))}}]},
+{id:"com",t:"Communication",c:"#B85C7A",blocks:[
+ {id:"lanc",t:"Lancement",fields:[["comdate","Date de lancement","date"],["combud","Budget com max (€)","number"]]},
+ {id:"visu",mod:"visu",t:"Identité visuelle",fields:[["charte","Charte graphique","select",["Existe déjà","À créer","En cours"]],["ambiance","Ambiance (3 mots)"],["couleurs","Couleurs principales"],["mood","Lien moodboard / dossier"]],table:{cols:[["cont","Contenu à produire"],["besoin","Besoin ?","select",YN],["qui","Qui le fait"],["dl","Deadline","date"],["statut","Statut","select",["À faire","En cours","Validé"]]],rows:["Affiche principale","Visuels réseaux (posts, stories)","Teaser vidéo","Annonce line-up","Fond de scène / écran","Signalétique sur place","Contenu jour J"].map(x=>({cont:x}))}},
+ {id:"canaux",t:"Marketing & communication",table:{cols:[["canal","Canal"],["util","Utilisé ?","select",YN],["rythme","Rythme","select",["Quotidien","2-3 fois / semaine","Hebdomadaire","Ponctuel"]],["statut","Statut","select",["À préparer","Prêt","En ligne"]]],rows:["Instagram","TikTok","Snapchat","Facebook","WhatsApp (groupes, statuts)","Publicité payante (ads)","Affichage / flyers","Radio / médias","Emailing / SMS"].map(x=>({canal:x}))}},
+ {id:"infl",mod:"infl",t:"Influenceurs / créateurs",table:{cols:[["nom","Nom / compte"],["reseau","Réseau","select",["Instagram","TikTok","Snapchat","YouTube","Autre"]],["abo","Abonnés","number"],["deal","Deal","select",["Invitation","Rémunéré","Échange"]],["statut","Statut","select",["À contacter","Contacté","Confirmé","Refusé"]]],rows:[]}}]},
+{id:"commercial",t:"Commercial & RP",c:"#4E8A5C",mod:"comm",blocks:[
+ {id:"besoinsp",t:"Nos besoins à faire couvrir par un partenaire",special:"besoinsp"},
+ {id:"demarchage",t:"Partenaires & sponsors",table:{cols:[["marque","Marque"],["secteur","Secteur","select",["Boisson","Alcool","Food","Mode","Beauté","Média","Tech / télécom","Commerce local","Autre"]],["apport","Type d'apport","select",["Cash","Nature","Visibilité","Mixte"]],["demande","Ce qu'on demande"],["valeur","Valeur (€)","number"],["contre","Contrepartie"],["contact","Contact"],["statut","Statut","select",["À contacter","Contacté","Relancé","RDV","Signé","Refusé"]],["dernier","Dernier contact","date"]],rows:[]}},
+ {id:"vip",mod:"vip",t:"VIP, ambassadeurs, presse",table:{cols:[["nom","Nom"],["role","Rôle","select",["VIP","Ambassadeur·rice","Média / presse","Influenceur·se","Invité partenaire"]],["inv","Invitations","number"],["statut","Statut","select",["À contacter","Invité","Confirmé","Refusé"]]],rows:[]}}]},
+{id:"ope",t:"Opérationnel",c:"#3A7CA5",blocks:[
+ {id:"staff",t:"Staff & régie",fields:[["staffnb","Staff (nb)","number"],["staffdet","Détail du staff","area"],["secunb","Agents de sécurité (nb)","number"],["secupar","Sécurité fournie par"],["regie","Régie"],["regiec","Contact régie"],["budlog","Budget logistique max (€)","number"]]},
+ {id:"billet",t:"Billetterie",fields:[["btype","Type","select",["Payante","Gratuite","Gratuite sur liste","Mixte"]],["bplat","Plateformes","multi",PLATS],["bopen","Date d'ouverture","date"]]},
+ {id:"besoins",t:"Besoins logistiques",note:"« Partenaire » dans Couvert par envoie le besoin dans l'onglet Commercial.",table:{cols:[["cat","Catégorie","select",["Technique","Accueil","Bar & food","Sécurité","Confort","Transport","Autre"]],["besoin","Besoin"],["need","Besoin ?","select",YN],["qte","Qté","number"],["par","Couvert par","select",["Lieu","Prestataire","Location","Achat","Partenaire","Équipe"]],["presta","Prestataire / contact"],["statut","Statut","select",["À trouver","Devis","Réservé","OK"]]],rows:[["Technique","Son"],["Technique","Lumière"],["Technique","Scène / DJ booth"],["Technique","Écrans / vidéo"],["Technique","Électricité / groupe électrogène"],["Accueil","Contrôle d'accès / scan billets"],["Accueil","Vestiaire"],["Bar & food","Bar (matériel)"],["Bar & food","Boissons"],["Bar & food","Food / traiteur"],["Sécurité","Secouristes"],["Sécurité","Barrières"],["Confort","Mobilier"],["Confort","Déco / scénographie"],["Confort","Photobooth / coin photo"],["Transport","Navettes public"],["Transport","Parking"]].map(([c,b])=>({cat:c,besoin:b}))}},
+ {id:"planj",mod:"planj",t:"Planning du jour J",table:{cols:[["date","Date","date"],["moment","Moment"],["heure","Heure","time"],["qui","Qui"]],rows:["Arrivée équipe / montage","Livraisons","Balances son","Brief staff","Ouverture des portes","Fermeture des portes","Démontage","Rendu des clés / état des lieux"].map(x=>({moment:x}))}},
+ {id:"risk",mod:"risk",t:"Risques",table:{cols:[["risque","Risque"],["conc","Concerné ?","select",YN],["planb","Plan B"]],rows:["Météo","Sur-jauge / flux","Sécurité / bagarre","Panne technique","Accès / transport"].map(x=>({risque:x}))}}]},
+{id:"bilan",t:"Bilan",c:"#0E7490",blocks:[
+ {id:"debrief",t:"Débrief",fields:[["dbdate","Date du débrief","date"],["dbpar","Débrief fait par"]]},
+ {id:"chiffres",t:"Chiffres de la soirée",fields:[["entrees","Entrées (nb de personnes)","number"],["pic","Heure de pic","time"],["rupt","Rupture de stock au bar","select",["Non","Oui"]],["ruptq","Sur quoi ?",0,0,"rupt"],["incid","Nombre d'incidents","number"]]},
+ {id:"objr",t:"Objectif vs réel",table:{fixed:1,cols:[["ind","Indicateur","ro"],["obj","Objectif","number"],["reel","Réel","number"],["ok","Atteint ?","calc"]],rows:["Participants","Taux de remplissage (%)","Billets vendus avant J-7 (%)","Chiffre d'affaires (€)","Satisfaction du public (%)","Nouveaux abonnés réseaux"].map(x=>({ind:x}))}},
+ {id:"terrain",t:"Retour terrain (compte rendu de la régie)",table:{cols:[["poste","Poste"],["note","Note /5","note"],["resp","Responsable"],["resume","Résumé en une phrase"]],rows:["Livraison","Préparation / montage","Technique (son, lumière)","Entrée","Vestiaire","Bar","CDR","Sécurité","Staff","Artistes / DJ","Fermeture / démontage","Ambiance de la soirée"].map(x=>({poste:x}))}},
+ {id:"incidents",t:"Incidents",table:{cols:[["heure","Heure","time"],["type","Type","select",["Sécurité","Médical","Dégradation","Autre"]],["quoi","Ce qui s'est passé"],["gestion","Comment ça a été géré"]],rows:[]}},
+ {id:"poles",t:"Retour par pôle",table:{cols:[["pole","Pôle"],["note","Note /5","note"],["ok","Ce qui a marché"],["ko","Ce qui n'a pas marché"],["amel","À améliorer"]],rows:["Production","Prog — lieu","Prog — artistique","Communication","Commercial & RP","Opérationnel","Global"].map(x=>({pole:x}))}},
+ {id:"ext",t:"Retours extérieurs",table:{cols:[["src","Source"],["note","Note /5","note"],["com","Commentaire"]],rows:["Public","Partenaires","Staff (synthèse)","Lieu","Artistes"].map(x=>({src:x}))}},
+ {id:"top3",t:"Top 3 des actions pour la prochaine édition",table:{cols:[["action","Action"],["resp","Responsable"],["dl","Deadline","date"],["statut","Statut","select",["À faire","En cours","Fait"]]],rows:[{},{},{}]}},
+ {id:"bravo",t:"Une personne à féliciter",fields:[["bravo","Qui, et pourquoi"]]}]}
+];
+function blankFiche(schema){const f={},t={};
+ (schema||DEFAULT_SCHEMA).forEach(s=>s.blocks.forEach(b=>{(b.fields||[]).forEach(x=>f[x[0]]=x[2]==="multi"?[]:"");if(b.table)t[b.id]=JSON.parse(JSON.stringify(b.table.rows||[]));}));
+ return {v:1,mods:{},f,t};}
+
+
+const DEMO = [{"id": "f-kompet-full-black", "data": {"v": 1, "mods": {"comm": true, "vip": true, "concept": true, "admin": true, "anim": true, "visu": true, "infl": true, "planj": true, "risk": true}, "f": {"nom": "La Kompet « Full Black »", "date": "2026-12-05", "hdeb": "23:59", "hfin": "06:00", "cap": "350", "age": "18 ans et +", "profil": "Woman only : 100 % filles, ambiance afro-caribéenne, envie de danser et de s'ambiancer", "porteur": "Laure et Asleen (les filles de la Kompet)", "force": "", "concept": "Soirée 100 % féminine sur une péniche au cœur de Paris : une nuit afro-caribéenne où les filles viennent danser entre elles, toutes en noir (dress code full black), portées par deux DJ femmes.", "adn": "Féminine · Afro-caribéenne · Full black", "obj1": "Fidéliser le public", "obj2": "Visibilité / contenus réseaux", "lstat": "Trouvé", "lnom": "La Péniche", "ladr": "2 quai de la Tournelle", "lville": "75005 Paris", "ltype": "Péniche", "lcap": "350", "lfin": "06:00", "lcontact": "", "lpart": "Son, lumière, bar et vestiaire fournis par le lieu. 350 pers. et fin à 6 h convenues avec le lieu.", "rzone": "", "rprec": "", "rtype": "", "rbud": "", "rfin": "", "rdl": "", "style": "Afro-caribéen", "noto": "", "bart": "", "comdate": "", "combud": "", "charte": "", "ambiance": "", "couleurs": "", "mood": "", "staffnb": "10", "staffdet": "Entrée : 1 accueil + 1 scan · CDR : 2 · Bar : 1 barmaid + 1 cocktails · Vestiaire · Régie : Maïly · Office : Crystel", "secunb": "4", "secupar": "2 par B2S + 2 par le lieu (à confirmer)", "regie": "Maïly", "regiec": "", "budlog": "", "btype": "Payante", "bplat": ["Bizouk", "Billetweb", "Shotgun"], "bopen": "2026-10-10", "dbdate": "", "dbpar": "", "entrees": "", "pic": "", "rupt": "", "ruptq": "", "incid": "", "bravo": ""}, "t": {"b2s": [{"role": "Chef·fe de projet"}, {"role": "Coordination / production", "nom": "Florina et Prescillia", "statut": "Confirmé"}, {"role": "Direction artistique", "nom": "Taïna", "statut": "Confirmé"}, {"role": "Programmation", "nom": "Simon", "statut": "Confirmé"}, {"role": "Communication"}, {"role": "Logistique / opérationnel", "nom": "TOF", "statut": "Confirmé"}, {"role": "Régie", "nom": "Maïly", "statut": "Confirmé"}], "concept_team": [{"role": "Concept manager", "nom": "Laure et Asleen", "statut": "Confirmé"}], "retro": [{"phase": "Conception", "etape": "Concept + ADN validés", "j": "120", "statut": "Terminé"}, {"phase": "Conception", "etape": "Équipe concept constituée", "j": "110", "statut": "Terminé"}, {"phase": "Conception", "etape": "Budget prévisionnel validé", "j": "100", "statut": "Terminé"}, {"phase": "Conception", "etape": "Lieu trouvé", "j": "90", "statut": "Terminé"}, {"phase": "Conception", "etape": "Date verrouillée", "j": "90", "statut": "Terminé"}, {"phase": "Préparation", "etape": "Contrat de location signé", "j": "75"}, {"phase": "Préparation", "etape": "Partenaires démarchés", "j": "60"}, {"phase": "Préparation", "etape": "Line-up confirmé", "j": "60", "statut": "Terminé"}, {"phase": "Préparation", "etape": "Charte + affiche prêtes", "j": "50", "statut": "Terminé"}, {"phase": "Préparation", "etape": "Contrats artistes / DJ signés", "j": "50"}, {"phase": "Préparation", "etape": "Prestataires réservés", "j": "40", "statut": "En cours", "resp": "TOF"}, {"phase": "Lancement", "etape": "Lancement de la com", "j": "45", "statut": "Terminé"}, {"phase": "Lancement", "etape": "Ouverture de la billetterie", "j": "45", "statut": "Terminé"}, {"phase": "Lancement", "etape": "Annonce du line-up", "j": "35", "statut": "Terminé"}, {"phase": "Lancement", "etape": "Partenaires signés", "j": "30"}, {"phase": "Dernière ligne droite", "etape": "Autorisations obtenues", "j": "21"}, {"phase": "Dernière ligne droite", "etape": "Staff complet", "j": "14", "statut": "En cours"}, {"phase": "Dernière ligne droite", "etape": "Brief staff", "j": "3", "statut": "À faire"}, {"phase": "Dernière ligne droite", "etape": "Point final logistique", "j": "2", "statut": "À faire"}, {"phase": "Jour J", "etape": "Montage", "j": "0", "statut": "À faire"}, {"phase": "Jour J", "etape": "Événement", "j": "0", "statut": "À faire"}, {"phase": "Après", "etape": "Débrief équipe", "j": "-7", "statut": "À faire"}, {"phase": "Après", "etape": "Bilan rempli", "j": "-14", "statut": "À faire"}], "admin": [{"doc": "Contrat du lieu", "conc": "Oui"}, {"doc": "Contrats artistes"}, {"doc": "Contrats DJ", "conc": "Oui"}, {"doc": "Contrats / déclarations du staff", "conc": "Oui"}, {"doc": "Licence alcool"}, {"doc": "Autorisations (mairie ou autre)"}], "equip": [{"eq": "Son", "st": "OK lieu"}, {"eq": "Lumière", "st": "OK lieu"}, {"eq": "Scène / DJ booth", "st": "OK lieu"}, {"eq": "Bar", "st": "OK lieu"}, {"eq": "Licence alcool"}, {"eq": "Vestiaire", "st": "OK lieu"}, {"eq": "Cuisine / espace food"}, {"eq": "Espace extérieur"}, {"eq": "Parking"}, {"eq": "Loges artistes"}, {"eq": "Accès PMR"}, {"eq": "Sécurité"}], "lineup": [{"nom": "DJ Doubi", "type": "DJ", "statut": "Confirmé", "note": "Set de 3 h (ordre à définir)"}, {"nom": "DJ Frip's", "type": "DJ", "statut": "Confirmé", "note": "Set de 3 h (ordre à définir)"}, {"nom": "Danseuse (nom à compléter)", "type": "Danseuse / danseur", "statut": "Confirmé"}], "anim": [{"anim": "Showcase"}, {"anim": "DJ sets", "prevu": "Oui"}, {"anim": "Battle / concours"}, {"anim": "Jeux / animations public"}, {"anim": "Danseurs", "prevu": "Oui"}, {"anim": "Canon à mousse"}, {"anim": "Feux d'artifice / étincelles"}, {"anim": "Photobooth", "prevu": "Oui", "cren": "Prestataire à confirmer"}], "visu": [{"cont": "Affiche principale", "besoin": "Oui", "statut": "Validé"}, {"cont": "Visuels réseaux (posts, stories)", "besoin": "Oui", "statut": "En cours"}, {"cont": "Teaser vidéo"}, {"cont": "Annonce line-up"}, {"cont": "Fond de scène / écran"}, {"cont": "Signalétique sur place"}, {"cont": "Contenu jour J", "besoin": "Oui", "qui": "Photographe + vidéaste", "statut": "À faire"}], "canaux": [{"canal": "Instagram"}, {"canal": "TikTok"}, {"canal": "Snapchat"}, {"canal": "Facebook"}, {"canal": "WhatsApp (groupes, statuts)"}, {"canal": "Publicité payante (ads)"}, {"canal": "Affichage / flyers"}, {"canal": "Radio / médias"}, {"canal": "Emailing / SMS"}], "infl": [], "demarchage": [], "vip": [], "besoins": [{"cat": "Technique", "besoin": "Son", "need": "Oui", "par": "Lieu", "statut": "OK"}, {"cat": "Technique", "besoin": "Lumière", "need": "Oui", "par": "Lieu", "statut": "OK"}, {"cat": "Technique", "besoin": "Scène / DJ booth", "need": "Oui", "par": "Lieu", "statut": "OK"}, {"cat": "Technique", "besoin": "Écrans / vidéo", "need": "Non"}, {"cat": "Technique", "besoin": "Électricité / groupe électrogène", "need": "Non"}, {"cat": "Accueil", "besoin": "Contrôle d'accès / scan billets"}, {"cat": "Accueil", "besoin": "Vestiaire", "need": "Oui", "par": "Lieu", "statut": "OK"}, {"cat": "Bar & food", "besoin": "Bar (matériel)", "need": "Oui", "par": "Lieu", "statut": "OK"}, {"cat": "Bar & food", "besoin": "Boissons"}, {"cat": "Bar & food", "besoin": "Food / traiteur"}, {"cat": "Sécurité", "besoin": "Secouristes"}, {"cat": "Sécurité", "besoin": "Barrières"}, {"cat": "Confort", "besoin": "Mobilier"}, {"cat": "Confort", "besoin": "Déco / scénographie"}, {"cat": "Confort", "besoin": "Photobooth / coin photo", "need": "Oui", "par": "Prestataire", "statut": "Devis", "presta": "À confirmer"}, {"cat": "Transport", "besoin": "Navettes public"}, {"cat": "Transport", "besoin": "Parking"}], "planj": [{"moment": "Arrivée équipe / montage"}, {"moment": "Livraisons"}, {"moment": "Balances son"}, {"moment": "Brief staff"}, {"moment": "Ouverture des portes", "date": "2026-12-05", "heure": "23:59"}, {"moment": "Fermeture des portes", "date": "2026-12-06", "heure": "06:00"}, {"moment": "Démontage"}, {"moment": "Rendu des clés / état des lieux"}], "risk": [{"risque": "Météo"}, {"risque": "Sur-jauge / flux"}, {"risque": "Sécurité / bagarre"}, {"risque": "Panne technique"}, {"risque": "Accès / transport"}], "objr": [{"ind": "Participants"}, {"ind": "Taux de remplissage (%)"}, {"ind": "Billets vendus avant J-7 (%)"}, {"ind": "Chiffre d'affaires (€)"}, {"ind": "Satisfaction du public (%)"}, {"ind": "Nouveaux abonnés réseaux"}], "terrain": [{"poste": "Livraison"}, {"poste": "Préparation / montage"}, {"poste": "Technique (son, lumière)"}, {"poste": "Entrée"}, {"poste": "Vestiaire"}, {"poste": "Bar"}, {"poste": "CDR"}, {"poste": "Sécurité"}, {"poste": "Staff"}, {"poste": "Artistes / DJ"}, {"poste": "Fermeture / démontage"}, {"poste": "Ambiance de la soirée"}], "incidents": [], "poles": [{"pole": "Production"}, {"pole": "Prog — lieu"}, {"pole": "Prog — artistique"}, {"pole": "Communication"}, {"pole": "Commercial & RP"}, {"pole": "Opérationnel"}, {"pole": "Global"}], "ext": [{"src": "Public"}, {"src": "Partenaires"}, {"src": "Staff (synthèse)"}, {"src": "Lieu"}, {"src": "Artistes"}], "top3": [{}, {}, {}]}, "updatedAt": 1795605294844, "createdAt": 1795605294844, "dossier": "d-kompet"}}, {"id": "f-la-open-pink", "data": {"v": 1, "mods": {}, "f": {"nom": "La Open — Édition Pink", "date": "2026-12-11", "hdeb": "", "hfin": "", "cap": "", "age": "", "profil": "", "porteur": "", "force": "", "concept": "La Open en édition Pink : une soirée au thème rose, ambiance sexy et shows sur scène, au cœur de Paris.", "adn": "Rose · Sexy · Show", "obj1": "", "obj2": "", "lstat": "Trouvé", "lnom": "Infinity Club", "ladr": "94 rue d'Amsterdam", "lville": "75009 Paris", "ltype": "Discothèque / club", "lcap": "", "lfin": "", "lcontact": "", "lpart": "Thème rose (édition Pink).", "rzone": "", "rprec": "", "rtype": "", "rbud": "", "rfin": "", "rdl": "", "style": "", "noto": "", "bart": "", "comdate": "", "combud": "", "charte": "", "ambiance": "", "couleurs": "", "mood": "", "staffnb": "", "staffdet": "", "secunb": "", "secupar": "", "regie": "", "regiec": "", "budlog": "", "btype": "", "bplat": [], "bopen": "", "dbdate": "", "dbpar": "", "entrees": "", "pic": "", "rupt": "", "ruptq": "", "incid": "", "bravo": ""}, "t": {"b2s": [{"role": "Chef·fe de projet"}, {"role": "Coordination / production"}, {"role": "Direction artistique"}, {"role": "Programmation"}, {"role": "Communication"}, {"role": "Logistique / opérationnel"}, {"role": "Régie"}], "concept_team": [{"role": "Concept manager"}], "retro": [{"phase": "Conception", "etape": "Concept + ADN validés", "j": "120"}, {"phase": "Conception", "etape": "Équipe concept constituée", "j": "110"}, {"phase": "Conception", "etape": "Budget prévisionnel validé", "j": "100"}, {"phase": "Conception", "etape": "Lieu trouvé", "j": "90"}, {"phase": "Conception", "etape": "Date verrouillée", "j": "90"}, {"phase": "Préparation", "etape": "Contrat de location signé", "j": "75"}, {"phase": "Préparation", "etape": "Partenaires démarchés", "j": "60"}, {"phase": "Préparation", "etape": "Line-up confirmé", "j": "60"}, {"phase": "Préparation", "etape": "Charte + affiche prêtes", "j": "50"}, {"phase": "Préparation", "etape": "Contrats artistes / DJ signés", "j": "50"}, {"phase": "Préparation", "etape": "Prestataires réservés", "j": "40"}, {"phase": "Lancement", "etape": "Lancement de la com", "j": "45"}, {"phase": "Lancement", "etape": "Ouverture de la billetterie", "j": "45"}, {"phase": "Lancement", "etape": "Annonce du line-up", "j": "35"}, {"phase": "Lancement", "etape": "Partenaires signés", "j": "30"}, {"phase": "Dernière ligne droite", "etape": "Autorisations obtenues", "j": "21"}, {"phase": "Dernière ligne droite", "etape": "Staff complet", "j": "14"}, {"phase": "Dernière ligne droite", "etape": "Brief staff", "j": "3"}, {"phase": "Dernière ligne droite", "etape": "Point final logistique", "j": "2"}, {"phase": "Jour J", "etape": "Montage", "j": "0"}, {"phase": "Jour J", "etape": "Événement", "j": "0"}, {"phase": "Après", "etape": "Débrief équipe", "j": "-7"}, {"phase": "Après", "etape": "Bilan rempli", "j": "-14"}], "admin": [{"doc": "Contrat du lieu"}, {"doc": "Contrats artistes"}, {"doc": "Contrats DJ"}, {"doc": "Contrats / déclarations du staff"}, {"doc": "Licence alcool"}, {"doc": "Autorisations (mairie ou autre)"}], "equip": [{"eq": "Son"}, {"eq": "Lumière"}, {"eq": "Scène / DJ booth"}, {"eq": "Bar"}, {"eq": "Licence alcool"}, {"eq": "Vestiaire"}, {"eq": "Cuisine / espace food"}, {"eq": "Espace extérieur"}, {"eq": "Parking"}, {"eq": "Loges artistes"}, {"eq": "Accès PMR"}, {"eq": "Sécurité"}], "lineup": [{"nom": "DJ Kenjox", "type": "DJ", "statut": "Confirmé"}, {"nom": "DJ Tilowi", "type": "DJ", "statut": "Confirmé"}, {"nom": "DJ Mgie", "type": "DJ", "statut": "Confirmé"}], "anim": [{"anim": "Showcase"}, {"anim": "DJ sets", "prevu": "Oui"}, {"anim": "Battle / concours"}, {"anim": "Jeux / animations public"}, {"anim": "Danseurs"}, {"anim": "Canon à mousse"}, {"anim": "Feux d'artifice / étincelles"}, {"anim": "Photobooth"}], "visu": [{"cont": "Affiche principale"}, {"cont": "Visuels réseaux (posts, stories)"}, {"cont": "Teaser vidéo"}, {"cont": "Annonce line-up"}, {"cont": "Fond de scène / écran"}, {"cont": "Signalétique sur place"}, {"cont": "Contenu jour J"}], "canaux": [{"canal": "Instagram"}, {"canal": "TikTok"}, {"canal": "Snapchat"}, {"canal": "Facebook"}, {"canal": "WhatsApp (groupes, statuts)"}, {"canal": "Publicité payante (ads)"}, {"canal": "Affichage / flyers"}, {"canal": "Radio / médias"}, {"canal": "Emailing / SMS"}], "infl": [], "demarchage": [], "vip": [], "besoins": [{"cat": "Technique", "besoin": "Son"}, {"cat": "Technique", "besoin": "Lumière"}, {"cat": "Technique", "besoin": "Scène / DJ booth"}, {"cat": "Technique", "besoin": "Écrans / vidéo"}, {"cat": "Technique", "besoin": "Électricité / groupe électrogène"}, {"cat": "Accueil", "besoin": "Contrôle d'accès / scan billets"}, {"cat": "Accueil", "besoin": "Vestiaire"}, {"cat": "Bar & food", "besoin": "Bar (matériel)"}, {"cat": "Bar & food", "besoin": "Boissons"}, {"cat": "Bar & food", "besoin": "Food / traiteur"}, {"cat": "Sécurité", "besoin": "Secouristes"}, {"cat": "Sécurité", "besoin": "Barrières"}, {"cat": "Confort", "besoin": "Mobilier"}, {"cat": "Confort", "besoin": "Déco / scénographie"}, {"cat": "Confort", "besoin": "Photobooth / coin photo"}, {"cat": "Transport", "besoin": "Navettes public"}, {"cat": "Transport", "besoin": "Parking"}], "planj": [{"moment": "Arrivée équipe / montage"}, {"moment": "Livraisons"}, {"moment": "Balances son"}, {"moment": "Brief staff"}, {"moment": "Ouverture des portes"}, {"moment": "Fermeture des portes"}, {"moment": "Démontage"}, {"moment": "Rendu des clés / état des lieux"}], "risk": [{"risque": "Météo"}, {"risque": "Sur-jauge / flux"}, {"risque": "Sécurité / bagarre"}, {"risque": "Panne technique"}, {"risque": "Accès / transport"}], "objr": [{"ind": "Participants"}, {"ind": "Taux de remplissage (%)"}, {"ind": "Billets vendus avant J-7 (%)"}, {"ind": "Chiffre d'affaires (€)"}, {"ind": "Satisfaction du public (%)"}, {"ind": "Nouveaux abonnés réseaux"}], "terrain": [{"poste": "Livraison"}, {"poste": "Préparation / montage"}, {"poste": "Technique (son, lumière)"}, {"poste": "Entrée"}, {"poste": "Vestiaire"}, {"poste": "Bar"}, {"poste": "CDR"}, {"poste": "Sécurité"}, {"poste": "Staff"}, {"poste": "Artistes / DJ"}, {"poste": "Fermeture / démontage"}, {"poste": "Ambiance de la soirée"}], "incidents": [], "poles": [{"pole": "Production"}, {"pole": "Prog — lieu"}, {"pole": "Prog — artistique"}, {"pole": "Communication"}, {"pole": "Commercial & RP"}, {"pole": "Opérationnel"}, {"pole": "Global"}], "ext": [{"src": "Public"}, {"src": "Partenaires"}, {"src": "Staff (synthèse)"}, {"src": "Lieu"}, {"src": "Artistes"}], "top3": [{}, {}, {}]}, "updatedAt": 1795609000000, "createdAt": 1795609000000, "dossier": "d-la-open"}}, {"id": "f-show-vybz-warren-dlova", "data": {"v": 1, "mods": {}, "f": {"nom": "Show Vybz — Warren & D.Lova", "date": "2026-12-19", "hdeb": "20:00", "hfin": "05:00", "cap": "", "age": "", "profil": "", "porteur": "", "force": "", "concept": "Une soirée de Noël en trois temps : un chanté Noël avec Ethnick en before, le show live de Warren et D.Lova avec leurs musiciens, puis un after show avec 4 DJ jusqu'à 5 h.", "adn": "", "obj1": "", "obj2": "", "lstat": "Trouvé", "lnom": "Pavillon Gravelle", "ladr": "2 route du Pesage (bois de Vincennes)", "lville": "75012 Paris", "ltype": "Salle de réception", "lcap": "", "lfin": "", "lcontact": "", "lpart": "Soirée en 3 temps : before chanté Noël (20h-21h30), show live (22h-00h), after show (00h-05h).", "rzone": "", "rprec": "", "rtype": "", "rbud": "", "rfin": "", "rdl": "", "style": "", "noto": "", "bart": "", "comdate": "", "combud": "", "charte": "", "ambiance": "", "couleurs": "", "mood": "", "staffnb": "", "staffdet": "", "secunb": "", "secupar": "", "regie": "", "regiec": "", "budlog": "", "btype": "", "bplat": [], "bopen": "", "dbdate": "", "dbpar": "", "entrees": "", "pic": "", "rupt": "", "ruptq": "", "incid": "", "bravo": ""}, "t": {"b2s": [{"role": "Chef·fe de projet"}, {"role": "Coordination / production"}, {"role": "Direction artistique"}, {"role": "Programmation"}, {"role": "Communication"}, {"role": "Logistique / opérationnel"}, {"role": "Régie"}], "concept_team": [{"role": "Concept manager"}], "retro": [{"phase": "Conception", "etape": "Concept + ADN validés", "j": "120"}, {"phase": "Conception", "etape": "Équipe concept constituée", "j": "110"}, {"phase": "Conception", "etape": "Budget prévisionnel validé", "j": "100"}, {"phase": "Conception", "etape": "Lieu trouvé", "j": "90"}, {"phase": "Conception", "etape": "Date verrouillée", "j": "90"}, {"phase": "Préparation", "etape": "Contrat de location signé", "j": "75"}, {"phase": "Préparation", "etape": "Partenaires démarchés", "j": "60"}, {"phase": "Préparation", "etape": "Line-up confirmé", "j": "60"}, {"phase": "Préparation", "etape": "Charte + affiche prêtes", "j": "50"}, {"phase": "Préparation", "etape": "Contrats artistes / DJ signés", "j": "50"}, {"phase": "Préparation", "etape": "Prestataires réservés", "j": "40"}, {"phase": "Lancement", "etape": "Lancement de la com", "j": "45"}, {"phase": "Lancement", "etape": "Ouverture de la billetterie", "j": "45"}, {"phase": "Lancement", "etape": "Annonce du line-up", "j": "35"}, {"phase": "Lancement", "etape": "Partenaires signés", "j": "30"}, {"phase": "Dernière ligne droite", "etape": "Autorisations obtenues", "j": "21"}, {"phase": "Dernière ligne droite", "etape": "Staff complet", "j": "14"}, {"phase": "Dernière ligne droite", "etape": "Brief staff", "j": "3"}, {"phase": "Dernière ligne droite", "etape": "Point final logistique", "j": "2"}, {"phase": "Jour J", "etape": "Montage", "j": "0"}, {"phase": "Jour J", "etape": "Événement", "j": "0"}, {"phase": "Après", "etape": "Débrief équipe", "j": "-7"}, {"phase": "Après", "etape": "Bilan rempli", "j": "-14"}], "admin": [{"doc": "Contrat du lieu"}, {"doc": "Contrats artistes"}, {"doc": "Contrats DJ"}, {"doc": "Contrats / déclarations du staff"}, {"doc": "Licence alcool"}, {"doc": "Autorisations (mairie ou autre)"}], "equip": [{"eq": "Son"}, {"eq": "Lumière"}, {"eq": "Scène / DJ booth"}, {"eq": "Bar"}, {"eq": "Licence alcool"}, {"eq": "Vestiaire"}, {"eq": "Cuisine / espace food"}, {"eq": "Espace extérieur"}, {"eq": "Parking"}, {"eq": "Loges artistes"}, {"eq": "Accès PMR"}, {"eq": "Sécurité"}], "lineup": [{"nom": "Ethnick", "type": "Artiste", "deb": "20:00", "fin": "21:30", "statut": "Confirmé", "note": "Before : chanté Noël"}, {"nom": "Warren", "type": "Artiste", "deb": "22:00", "fin": "00:00", "statut": "Confirmé", "note": "Show live avec musiciens"}, {"nom": "D.Lova", "type": "Artiste", "deb": "22:00", "fin": "00:00", "statut": "Confirmé", "note": "Show live avec musiciens"}, {"nom": "DJ Daboyz", "type": "DJ", "deb": "00:00", "fin": "05:00", "statut": "Confirmé", "note": "After show"}, {"nom": "DJ Stile", "type": "DJ", "deb": "00:00", "fin": "05:00", "statut": "Confirmé", "note": "After show"}, {"nom": "DJ Skety", "type": "DJ", "deb": "00:00", "fin": "05:00", "statut": "Confirmé", "note": "After show"}, {"nom": "DJ Jezzy", "type": "DJ", "deb": "00:00", "fin": "05:00", "statut": "Confirmé", "note": "After show"}], "anim": [{"anim": "Showcase", "prevu": "Oui", "cren": "Show live Warren & D.Lova, 22h-00h"}, {"anim": "DJ sets", "prevu": "Oui", "cren": "After show, 00h-05h"}, {"anim": "Battle / concours"}, {"anim": "Jeux / animations public"}, {"anim": "Danseurs"}, {"anim": "Canon à mousse"}, {"anim": "Feux d'artifice / étincelles"}, {"anim": "Photobooth"}], "visu": [{"cont": "Affiche principale"}, {"cont": "Visuels réseaux (posts, stories)"}, {"cont": "Teaser vidéo"}, {"cont": "Annonce line-up"}, {"cont": "Fond de scène / écran"}, {"cont": "Signalétique sur place"}, {"cont": "Contenu jour J"}], "canaux": [{"canal": "Instagram"}, {"canal": "TikTok"}, {"canal": "Snapchat"}, {"canal": "Facebook"}, {"canal": "WhatsApp (groupes, statuts)"}, {"canal": "Publicité payante (ads)"}, {"canal": "Affichage / flyers"}, {"canal": "Radio / médias"}, {"canal": "Emailing / SMS"}], "infl": [], "demarchage": [], "vip": [], "besoins": [{"cat": "Technique", "besoin": "Son"}, {"cat": "Technique", "besoin": "Lumière"}, {"cat": "Technique", "besoin": "Scène / DJ booth"}, {"cat": "Technique", "besoin": "Écrans / vidéo"}, {"cat": "Technique", "besoin": "Électricité / groupe électrogène"}, {"cat": "Accueil", "besoin": "Contrôle d'accès / scan billets"}, {"cat": "Accueil", "besoin": "Vestiaire"}, {"cat": "Bar & food", "besoin": "Bar (matériel)"}, {"cat": "Bar & food", "besoin": "Boissons"}, {"cat": "Bar & food", "besoin": "Food / traiteur"}, {"cat": "Sécurité", "besoin": "Secouristes"}, {"cat": "Sécurité", "besoin": "Barrières"}, {"cat": "Confort", "besoin": "Mobilier"}, {"cat": "Confort", "besoin": "Déco / scénographie"}, {"cat": "Confort", "besoin": "Photobooth / coin photo"}, {"cat": "Transport", "besoin": "Navettes public"}, {"cat": "Transport", "besoin": "Parking"}], "planj": [{"moment": "Arrivée équipe / montage"}, {"moment": "Livraisons"}, {"moment": "Balances son"}, {"moment": "Brief staff"}, {"moment": "Ouverture des portes", "date": "2026-12-19", "heure": "20:00"}, {"moment": "Fermeture des portes", "date": "2026-12-20", "heure": "05:00"}, {"moment": "Démontage"}, {"moment": "Rendu des clés / état des lieux"}], "risk": [{"risque": "Météo"}, {"risque": "Sur-jauge / flux"}, {"risque": "Sécurité / bagarre"}, {"risque": "Panne technique"}, {"risque": "Accès / transport", "conc": "Oui", "planb": "Bois de Vincennes : RER et métro à environ 20 min à pied. Prévoir le retour du public à 5 h."}], "objr": [{"ind": "Participants"}, {"ind": "Taux de remplissage (%)"}, {"ind": "Billets vendus avant J-7 (%)"}, {"ind": "Chiffre d'affaires (€)"}, {"ind": "Satisfaction du public (%)"}, {"ind": "Nouveaux abonnés réseaux"}], "terrain": [{"poste": "Livraison"}, {"poste": "Préparation / montage"}, {"poste": "Technique (son, lumière)"}, {"poste": "Entrée"}, {"poste": "Vestiaire"}, {"poste": "Bar"}, {"poste": "CDR"}, {"poste": "Sécurité"}, {"poste": "Staff"}, {"poste": "Artistes / DJ"}, {"poste": "Fermeture / démontage"}, {"poste": "Ambiance de la soirée"}], "incidents": [], "poles": [{"pole": "Production"}, {"pole": "Prog — lieu"}, {"pole": "Prog — artistique"}, {"pole": "Communication"}, {"pole": "Commercial & RP"}, {"pole": "Opérationnel"}, {"pole": "Global"}], "ext": [{"src": "Public"}, {"src": "Partenaires"}, {"src": "Staff (synthèse)"}, {"src": "Lieu"}, {"src": "Artistes"}], "top3": [{}, {}, {}]}, "updatedAt": 1795609000000, "createdAt": 1795609000000, "dossier": "d-show-vybz"}}];
+
+const $app = document.getElementById("app");
+const norm = sc => sc.map(s => ({id: s.id, t: s.t, c: s.c, mod: s.mod || null, blocks: s.blocks.map(b => {
+  const o = {id: b.id, t: b.t, mod: b.mod || null};
+  if (b.note) o.note = b.note; if (b.special) o.special = b.special;
+  if (b.fields) o.fields = b.fields.map(x => Array.isArray(x) ? {k: x[0], l: x[1], ty: x[2] || "text", op: x[3] || [], cond: x[4] || null} : x);
+  if (b.table) o.table = {fixed: !!b.table.fixed, rows: b.table.rows || [], cols: b.table.cols.map(x => Array.isArray(x) ? {k: x[0], l: x[1], ty: x[2] || "text", op: x[3] || []} : x)};
+  return o;
+})}));
+const DEF = norm(DEFAULT_SCHEMA);
+const S = {db: null, schema: null, list: [], dossiers: [], loaded: false, curId: null, cur: null, tab: "identite",
+  dirty: false, saving: false, pending: false, lastSaved: "", timer: null, savedMsg: "", confirmDel: false, msg: "", needRefresh: false,
+  preview: false, forced: false, realRo: false, _list: [], _dos: [],
+  view: "home", dosId: null, newDos: false, renDos: false, model: null, modelDirty: false, msec: 0, modelMsg: ""};
+const SC = () => S.schema || DEF;
+const schemaOf = fi => fi && fi.schema ? norm(fi.schema) : DEF;
+
+function h(tag, p, ...kids) {
+  const e = document.createElement(tag);
+  if (p) for (const k in p) {
+    const v = p[k]; if (v == null || v === false) continue;
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "style") e.style.cssText = v; else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return e;
+}
+const clone = o => JSON.parse(JSON.stringify(o));
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const pad = n => String(n).padStart(2, "0");
+function parseD(s) { if (!s) return null; const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); return m ? new Date(+m[1], m[2] - 1, +m[3]) : null; }
+function isoD(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function frD(s) { const d = parseD(s); return d ? pad(d.getDate()) + "/" + pad(d.getMonth() + 1) + "/" + d.getFullYear() : ""; }
+function today() { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function mins(t) { const m = /^(\d{1,2}):(\d{2})/.exec(t || ""); return m ? (+m[1]) * 60 + (+m[2]) : null; }
+function duree(f) { const a = mins(f.hdeb), b = mins(f.hfin); if (a == null || b == null) return ""; const d = ((b - a) % 1440 + 1440) % 1440; return Math.floor(d / 60) + "h" + pad(d % 60); }
+function blank(sc) { return blankFiche((sc || SC()).map(s => ({blocks: s.blocks.map(b => ({id: b.id, fields: (b.fields || []).map(x => [x.k, x.l, x.ty]), table: b.table}))}))); }
+function merge(d) {
+  const o = blank(schemaOf(d));
+  if (d.schema) o.schema = d.schema;
+  if (d.f) for (const k in d.f) o.f[k] = d.f[k];
+  if (d.t) for (const k in d.t) o.t[k] = d.t[k];
+  if (d.mods) for (const k in d.mods) o.mods[k] = d.mods[k];
+  for (const k of ["createdAt", "updatedAt", "dossier"]) if (d[k] != null) o[k] = d[k];
+  return o;
+}
+
+/* ---------- statuts ---------- */
+const OK = ["Confirmé", "Contrat signé", "Terminé", "Signé", "OK", "Validé", "En ligne", "Prêt", "Réservé", "Fait", "Trouvé", "OK lieu"];
+const MID = ["En discussion", "Négociation", "Contacté", "Relancé", "RDV", "En cours", "Devis", "À préparer", "Invité", "En négociation", "Souhaité"];
+const BAD = ["En recherche", "Bloqué", "Refusé", "À trouver", "Annulé", "À faire", "À contacter", "À rechercher", "À prévoir"];
+const NA = ["Pas nécessaire", "Pas besoin", "N/A"];
+function cls(v, note) { if (note) return v ? "n" + v : ""; if (OK.includes(v)) return "c-ok"; if (MID.includes(v)) return "c-mid"; if (BAD.includes(v)) return "c-bad"; if (NA.includes(v)) return "c-na"; return ""; }
+
+/* ---------- calculs ---------- */
+const rows = (fi, id) => fi.t[id] || [];
+const modOn = (fi, m) => !m || fi.mods[m] !== false;
+const hasBlock = (fi, id) => schemaOf(fi).some(s => s.blocks.some(b => b.id === id));
+function deadline(fi, r) {
+  if (r.etape === "Lancement de la com" && fi.f.comdate) return fi.f.comdate;
+  if (r.etape === "Ouverture de la billetterie" && fi.f.bopen) return fi.f.bopen;
+  const d = parseD(fi.f.date); if (!d || r.j === "" || r.j == null || isNaN(+r.j)) return "";
+  d.setDate(d.getDate() - (+r.j)); return isoD(d);
+}
+function atteint(fi, r) {
+  let reel = r.reel; if ((reel === "" || reel == null) && r.ind === "Participants") reel = fi.f.entrees;
+  if (r.obj === "" || r.obj == null || reel === "" || reel == null) return "";
+  return (+reel >= +r.obj) ? "Oui" : "Non";
+}
+const ratio = (n, d) => d ? n / d : 0;
+const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+function progress(fi) {
+  const sc = schemaOf(fi), p = {}, f = fi.f, ids = new Set(sc.filter(s => modOn(fi, s.mod)).map(s => s.id));
+  const blk = id => { for (const s of sc) for (const b of s.blocks) if (b.id === id) return modOn(fi, s.mod) && modOn(fi, b.mod); return false; };
+  if (ids.has("production")) {
+    const parts = [];
+    if (blk("b2s")) { const b = rows(fi, "b2s").filter(r => r.role); parts.push(ratio(b.filter(r => r.statut === "Confirmé" || r.statut === "Pas nécessaire").length, b.length)); }
+    if (blk("retro")) { const r = rows(fi, "retro").filter(r => r.etape); parts.push(ratio(r.filter(x => x.statut === "Terminé").length, r.length)); }
+    if (blk("admin")) { const a = rows(fi, "admin").filter(r => r.conc === "Oui"); parts.push(ratio(a.filter(r => r.statut === "Fait").length, a.length)); }
+    if (parts.length) p.production = avg(parts);
+  }
+  if (ids.has("prog")) {
+    const parts = [];
+    if (blk("lieu")) parts.push(f.lstat === "Trouvé" ? 1 : f.lstat === "En négociation" ? 0.6 : (f.rzone && f.rtype && f.rbud ? 0.2 : 0));
+    if (blk("lineup")) { const lu = rows(fi, "lineup").filter(r => r.nom); parts.push(ratio(lu.filter(r => r.statut === "Confirmé" || r.statut === "Contrat signé").length, lu.filter(r => r.statut !== "Annulé").length)); }
+    if (parts.length) p.prog = avg(parts);
+  }
+  if (ids.has("com")) {
+    const parts = [];
+    if (blk("canaux")) { const c = rows(fi, "canaux").filter(r => r.util === "Oui"); parts.push(ratio(c.filter(r => r.statut === "Prêt" || r.statut === "En ligne").length, c.length)); }
+    if (blk("visu")) { const c = rows(fi, "visu").filter(r => r.besoin === "Oui"); parts.push(ratio(c.filter(r => r.statut === "Validé").length, c.length)); }
+    if (parts.length) p.com = avg(parts);
+  }
+  if (ids.has("commercial") && blk("demarchage")) { const d = rows(fi, "demarchage").filter(r => r.marque); p.commercial = ratio(d.filter(r => r.statut === "Signé" || r.statut === "Refusé").length, d.length); }
+  if (ids.has("ope") && blk("besoins")) { const be = rows(fi, "besoins").filter(r => r.need === "Oui"); p.ope = ratio(be.filter(r => r.statut === "OK" || r.statut === "Réservé").length, be.length) * 0.8 + (f.staffnb && f.secunb ? 0.2 : 0); }
+  p.global = avg(Object.values(p));
+  return p;
+}
+function statut(fi, g) {
+  if (fi.f.force) return fi.f.force;
+  const d = parseD(fi.f.date); if (d && d < today()) return "Terminé";
+  return g === 0 ? "Idée" : g < 0.3 ? "En développement" : g < 0.8 ? "En production" : "Prêt";
+}
+function alerts(fi) {
+  const a = [], f = fi.f, t0 = today();
+  const late = rows(fi, "retro").filter(r => { const d = parseD(deadline(fi, r)); return r.etape && d && d < t0 && r.statut !== "Terminé"; }).length;
+  if (late && hasBlock(fi, "retro")) a.push(late + (late > 1 ? " étapes du rétroplanning en retard" : " étape du rétroplanning en retard"));
+  if (modOn(fi, "admin") && hasBlock(fi, "admin")) { const n = rows(fi, "admin").filter(r => r.conc === "Oui" && r.statut !== "Fait").length; if (n) a.push(n + " contrat(s) / autorisation(s) à régler"); }
+  if (f.lstat === "Trouvé" && f.lcap && f.cap && +f.cap > +f.lcap) a.push("Capacité max au-dessus de la capacité du lieu");
+  if (f.lstat === "À rechercher" && parseD(f.rdl) && parseD(f.rdl) < t0) a.push("Date limite dépassée pour trouver le lieu");
+  const ap = rows(fi, "equip").filter(r => r.st === "À prévoir").length; if (ap) a.push(ap + " équipement(s) à prévoir par l'équipe");
+  const be = rows(fi, "besoins").filter(r => r.need === "Oui" && r.statut !== "OK" && r.statut !== "Réservé").length; if (be) a.push(be + " besoin(s) logistique(s) pas encore réglé(s)");
+  if (modOn(fi, "comm")) { const rl = rows(fi, "demarchage").filter(r => (r.statut === "Contacté" || r.statut === "Relancé") && parseD(r.dernier) && (t0 - parseD(r.dernier)) / 864e5 > 7).length; if (rl) a.push(rl + " partenaire(s) à relancer"); }
+  return a;
+}
+function condOn(fi, c) { const f = fi.f; return !c || (c === "found" ? f.lstat === "Trouvé" : c === "search" ? f.lstat === "À rechercher" : c === "rupt" ? f.rupt === "Oui" : true); }
+function lieuTxt(f) { return f.lstat === "Trouvé" ? [f.lnom, f.lville].filter(Boolean).join(" · ") || "Lieu trouvé" : "Lieu : " + (f.lstat ? f.lstat.toLowerCase() : "à définir"); }
+function modsList(fi) { const l = []; for (const s of schemaOf(fi)) { if (s.mod) l.push([s.mod, "Onglet " + s.t]); for (const b of s.blocks) if (b.mod) l.push([b.mod, b.t]); } return l; }
+const dosName = id => (S.dossiers.find(d => d.id === id) || {}).nom;
+
+/* ---------- base de données ---------- */
+const DEMO_DOS = [["d-kompet", "La Kompet"], ["d-la-open", "La Open"], ["d-show-vybz", "Show Vybz"], ["d-sansasyon", "Sansasyon"], ["d-bouwey", "Bouwey"], ["d-la-premiere", "La Première"], ["d-hairitaj", "Hairitaj"], ["d-nuit-kreyol", "Nuit Kréyol"]].map(([id, nom]) => ({id, nom}));
+function applyData() {
+  S.list = S.preview ? clone(DEMO) : S._list;
+  S.dossiers = S.preview ? clone(DEMO_DOS) : S._dos;
+  S.ro = S.preview || S.realRo;
+}
+function setPreview(on) {
+  S.preview = on; applyData();
+  if (S.dirty) flush();
+  S.cur = null; S.curId = null;
+  if (location.hash.slice(1) === "" || location.hash === "#apercu") route(); else location.hash = "";
+}
+async function connect() {
+  if (location.hash === "#apercu") S.preview = true;
+  try { S.db = await claude.use("db"); } catch (e) { S.db = null; }
+  try {
+    const u = await claude.use("user");
+    if (u) { const w = await u.can("data.write"); if (w === false) S.realRo = true; const ed = await u.canEdit(); if (ed === false) S.noModel = true; }
+  } catch (e) {}
+  if (!S.db) {
+    S.loaded = true; S.dosLoaded = true; S.preview = true; S.forced = true; applyData();
+    route(); return;
+  }
+  applyData();
+  const tm = setTimeout(() => { if (!S.loaded) { S.msg = "Les fiches ne répondent pas encore. Vérifie ta connexion."; route(); } }, 10000);
+  const err = e => { clearTimeout(tm); S.loaded = true; S.msg = "Impossible de lire les données (" + e.code + ")."; route(); };
+  S.db.doc("config/modele").onSnapshot(snap => {
+    const d = snap.exists ? snap.data() : null;
+    S.schema = d && Array.isArray(d.schema) ? norm(d.schema) : null;
+    if (S.view === "modele" && S.modelDirty) return;
+    if (S.view === "modele") { S.model = clone(SC()); renderModele(); }
+    else if (S.view === "fiche" && S.cur) softRender();
+  }, err);
+  S.db.collection("dossiers").onSnapshot(snap => {
+    S._dos = snap.docs.filter(d => d.exists).map(d => ({id: d.id, ...d.data()})); S.dosLoaded = true; applyData();
+    if (S.view === "home" || S.view === "dossier") renderView();
+  }, err);
+  S.db.collection("fiches").onSnapshot(snap => {
+    clearTimeout(tm); S.loaded = true; if (!snap.metadata.fromCache) S.msg = "";
+    S._list = snap.docs.filter(d => d.exists).map(d => ({id: d.id, data: d.data()})); applyData();
+    if (S.preview) { if (S.view !== "fiche") renderView(); return; }
+    if (S.view !== "fiche") { renderView(); return; }
+    const d = S.list.find(x => x.id === S.curId);
+    if (!d) return;
+    if (!S.cur) { openFiche(S.curId); return; }
+    const js = JSON.stringify(d.data);
+    if (S.dirty || S.saving || js === S.lastSaved || (d.data.updatedAt || 0) <= (S.cur.updatedAt || 0)) return;
+    S.cur = merge(d.data); S.lastSaved = js; softRender();
+  }, err);
+}
+function softRender() {
+  if (document.activeElement && $app.contains(document.activeElement) && document.activeElement.matches("input,select,textarea")) S.needRefresh = true;
+  else renderFiche();
+}
+function schedule() { S.dirty = true; S.savedMsg = "Modifications…"; showSaved(); clearTimeout(S.timer); S.timer = setTimeout(flush, 700); }
+async function flush() {
+  if (!S.cur) return;
+  if (!S.db) { S.dirty = false; S.savedMsg = "Non enregistré (vue de test)"; showSaved(); return; }
+  if (S.saving) { S.pending = true; return; }
+  S.saving = true; S.dirty = false; S.cur.updatedAt = Date.now();
+  const id = S.curId, data = clone(S.cur);
+  try { await S.db.doc("fiches/" + id).set(data); S.lastSaved = JSON.stringify(data); S.savedMsg = "Enregistré"; }
+  catch (e) { if (e.code === "invalid_argument") { S.ro = true; S.savedMsg = "Lecture seule : tes changements ne sont pas enregistrés"; renderFiche(); } else S.savedMsg = "Échec de l'enregistrement, réessaie"; }
+  S.saving = false; showSaved();
+  if (S.pending || S.dirty) { S.pending = false; flush(); }
+}
+function showSaved() { const e = document.getElementById("saved"); if (e) e.textContent = S.savedMsg; }
+async function put(path, data) {
+  if (!S.db) return true;
+  try { await S.db.doc(path).set(data); return true; } catch (e) { note(e.code === "invalid_argument" ? "Tu n'as pas l'accès pour modifier. Demande-le à la personne qui gère les fiches." : "Enregistrement impossible (" + e.code + ")."); return false; }
+}
+async function remove(path) { if (!S.db) return true; try { await S.db.doc(path).delete(); return true; } catch (e) { note("Suppression impossible (" + e.code + ")."); return false; } }
+function note(m) { S.msg = m; renderView(); }
+
+/* ---------- navigation ---------- */
+function route() {
+  const id = location.hash.slice(1);
+  if (S.view === "fiche" && S.dirty) flush();
+  S.confirmDel = false; S.renDos = false; S.newDos = false;
+  if (id.startsWith("f-")) { S.view = "fiche"; if (S.curId !== id || !S.cur) openFiche(id); else renderFiche(); return; }
+  S.curId = null; S.cur = null;
+  if (id === "modele") { S.view = "modele"; if (!S.modelDirty) S.model = clone(SC()); S.msec = Math.min(S.msec, S.model.length - 1); }
+  else if (id.startsWith("d-")) { S.view = "dossier"; S.dosId = id; }
+  else if (id === "apercu") { if (S.db && !S.preview) { S.preview = true; applyData(); } S.view = "home"; }
+  else S.view = "home";
+  renderView(); window.scrollTo?.(0, 0);
+}
+function renderView() {
+  if (S.view === "home") renderHome(); else if (S.view === "dossier") renderDossier();
+  else if (S.view === "modele") renderModele(); else if (S.cur) renderFiche();
+}
+function openFiche(id) {
+  const d = S.list.find(x => x.id === id);
+  S.curId = id;
+  if (!d) { S.cur = null; if (S.loaded) location.hash = ""; else $app.replaceChildren(h("p", {class: "small", text: "Chargement…"})); return; }
+  S.cur = merge(d.data); S.lastSaved = JSON.stringify(d.data); S.tab = schemaOf(S.cur)[0].id;
+  renderFiche(); window.scrollTo?.(0, 0);
+}
+async function createFiche(base, dossier) {
+  const id = uid("f-"), data = base || blank(SC());
+  if (!base) data.schema = clone(SC());
+  if (!base) data.f.nom = dosName(dossier) || "Nouvel événement";
+  if (dossier) data.dossier = dossier;
+  data.createdAt = data.updatedAt = Date.now();
+  if (!(await put("fiches/" + id, data))) return;
+  if (!S.list.find(x => x.id === id)) S.list.push({id, data});
+  location.hash = id;
+}
+function duplicate() {
+  const b = blank(SC()), d = clone(S.cur);
+  d.schema = clone(SC());
+  d.f.nom = (d.f.nom || "Fiche") + " (copie)"; d.f.date = ""; d.f.force = "";
+  for (const k of ["dbdate", "dbpar", "entrees", "pic", "rupt", "ruptq", "incid", "bravo", "comdate", "bopen"]) if (k in b.f) d.f[k] = b.f[k];
+  for (const k of ["objr", "terrain", "incidents", "poles", "ext", "top3"]) if (k in b.t) d.t[k] = b.t[k];
+  if (d.t.retro) d.t.retro = d.t.retro.map(r => ({...r, statut: ""}));
+  delete d.updatedAt; createFiche(d, d.dossier);
+}
+async function delFiche() {
+  const dos = S.cur && S.cur.dossier;
+  if (!(await remove("fiches/" + S.curId))) return;
+  S.list = S.list.filter(x => x.id !== S.curId); S.cur = null; S.curId = null; S.dirty = false;
+  location.hash = dos ? dos : "";
+}
+
+/* ---------- accueil : dossiers ---------- */
+function ficheCard(id, data) {
+  const fi = merge(data), p = progress(fi), st = statut(fi, p.global), f = fi.f;
+  return h("button", {class: "ev", onclick: () => { location.hash = id; }},
+    h("h3", {text: f.nom || "Sans nom"}),
+    h("div", {class: "meta", text: [frD(f.date), f.hdeb && f.hfin ? f.hdeb + " → " + f.hfin : "", lieuTxt(f)].filter(Boolean).join(" · ")}),
+    h("div", {class: "pills"}, h("span", {class: "alert " + (st === "Prêt" || st === "Terminé" ? "okk" : ""), style: "padding:4px 10px", text: st}),
+      h("span", {class: "small", style: "align-self:center", text: "Avancement " + Math.round(p.global * 100) + " %"})));
+}
+function header(title, ...btns) { return h("div", {class: "top"}, h("h1", {text: title}), ...btns); }
+function renderHome() {
+  $app.replaceChildren(header("Fiches ID — B2S",
+    !S.preview && !S.realRo && S.db && !S.local ? h("button", {class: "btn ghost", onclick: () => setPreview(true)}, "Voir l'aperçu du patron") : null,
+    S.local ? h("button", {class: "btn ghost", onclick: backup}, "Sauvegarder") : null,
+    S.local ? h("label", {class: "btn ghost", style: "display:inline-flex;align-items:center"}, "Importer", h("input", {type: "file", accept: ".json,application/json", style: "display:none", onchange: e => restore(e.target.files[0])})) : null,
+    S.ro || S.noModel ? null : h("button", {class: "btn", onclick: () => { location.hash = "modele"; }}, "Modèle de fiche"),
+    S.ro ? null : h("button", {class: "btn pri", onclick: () => { S.newDos = true; renderHome(); }}, "+ Nouveau dossier")));
+  if (S.preview) $app.append(h("div", {class: "banner"}, S.forced
+      ? "Aperçu en lecture seule. Pour voir les fiches à jour et les modifier, il faut être connecté à Claude avec l'accès que t'a donné l'équipe."
+      : "Tu vois l'aperçu tel qu'il s'affiche pour quelqu'un sans compte Claude (ton patron via WhatsApp) : une photo figée, en lecture seule. ",
+    S.forced ? null : h("button", {class: "btn", style: "margin-left:8px", onclick: () => setPreview(false)}, "Revenir à mes fiches")));
+  else if (S.ro) $app.append(h("div", {class: "banner", text: "Lecture seule : tu peux consulter et exporter les fiches, pas les modifier."}));
+  if (S.msg) $app.append(h("div", {class: "banner", text: S.msg}));
+  if (S.newDos) {
+    const inp = h("input", {placeholder: "Nom du concept (ex : La Kompet)", "aria-label": "Nom du dossier"});
+    const go = async () => { const n = inp.value.trim(); if (!n) return; const id = uid("d-"); if (await put("dossiers/" + id, {nom: n, createdAt: Date.now()})) { if (!S.db) S.dossiers.push({id, nom: n}); S.newDos = false; location.hash = id; } };
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+    $app.append(h("div", {class: "block", style: "padding:14px 16px;display:flex;gap:8px;flex-wrap:wrap"}, inp,
+      h("button", {class: "btn pri", onclick: go}, "Créer le dossier"), h("button", {class: "btn ghost", onclick: () => { S.newDos = false; renderHome(); }}, "Annuler")));
+    setTimeout(() => inp.focus(), 0);
+  }
+  if (!S.loaded) { $app.append(h("p", {class: "small", text: "Chargement…"})); return; }
+  const grid = h("div", {class: "cards"});
+  const known = new Set(S.dossiers.map(d => d.id));
+  for (const d of S.dossiers.slice().sort((a, b) => (a.nom || "").localeCompare(b.nom || ""))) {
+    const fs = S.list.filter(x => x.data.dossier === d.id);
+    const next = fs.map(x => x.data.f || {}).filter(f => parseD(f.date) && parseD(f.date) >= today()).sort((a, b) => a.date.localeCompare(b.date))[0];
+    grid.append(h("button", {class: "ev folder", onclick: () => { location.hash = d.id; }},
+      h("span", {class: "tabcut"}), h("h3", {text: d.nom || "Dossier"}),
+      h("div", {class: "meta", text: fs.length + (fs.length > 1 ? " fiches" : " fiche")}),
+      h("div", {class: "meta", text: next ? "Prochain : " + frD(next.date) + (next.nom ? " · " + next.nom : "") : "Aucun événement à venir"})));
+  }
+  const orphan = S.list.filter(x => !x.data.dossier || !known.has(x.data.dossier));
+  if (orphan.length) grid.append(h("button", {class: "ev folder", onclick: () => { location.hash = "d-none"; }}, h("span", {class: "tabcut"}), h("h3", {text: "Sans dossier"}), h("div", {class: "meta", text: orphan.length + " fiche(s)"})));
+  if (!grid.children.length) $app.append(h("div", {class: "empty"}, h("p", {text: "Aucun dossier pour l'instant. Crée un dossier par concept (La Kompet, Bouwey…)."}), h("button", {class: "btn pri", onclick: () => { S.newDos = true; renderHome(); }}, "Créer le premier dossier")));
+  else $app.append(grid);
+}
+function renderDossier() {
+  const none = S.dosId === "d-none", d = S.dossiers.find(x => x.id === S.dosId);
+  if (!none && !d) { if (S.loaded && (S.dosLoaded || !S.db)) { location.hash = ""; return; } $app.replaceChildren(h("p", {class: "small", text: "Chargement…"})); return; }
+  const known = new Set(S.dossiers.map(x => x.id));
+  const fs = S.list.filter(x => none ? (!x.data.dossier || !known.has(x.data.dossier)) : x.data.dossier === d.id)
+    .sort((a, b) => ((a.data.f || {}).date || "9999").localeCompare((b.data.f || {}).date || "9999"));
+  $app.replaceChildren(h("div", {class: "bar-actions"}, h("button", {class: "btn ghost", onclick: () => { location.hash = ""; }}, "← Tous les dossiers")));
+  if (S.renDos && d) {
+    const inp = h("input", {"aria-label": "Nom du dossier"}); inp.value = d.nom || "";
+    const go = async () => { const n = inp.value.trim(); if (n && await put("dossiers/" + d.id, {nom: n, createdAt: d.createdAt || Date.now()})) { d.nom = n; S.renDos = false; renderDossier(); } };
+    $app.append(h("div", {class: "top"}, inp, h("button", {class: "btn pri", onclick: go}, "Renommer"), h("button", {class: "btn ghost", onclick: () => { S.renDos = false; renderDossier(); }}, "Annuler")));
+  } else {
+    $app.append(header(none ? "Sans dossier" : d.nom,
+      none || S.ro ? null : h("button", {class: "btn ghost", onclick: () => { S.renDos = true; renderDossier(); }}, "Renommer"),
+      !none && !fs.length && !S.ro ? h("button", {class: "btn ghost danger", onclick: async () => { if (await remove("dossiers/" + d.id)) { S.dossiers = S.dossiers.filter(x => x.id !== d.id); location.hash = ""; } }}, "Supprimer le dossier") : null,
+      S.ro ? null : h("button", {class: "btn pri", onclick: () => createFiche(null, none ? null : d.id)}, "+ Nouvelle fiche")));
+  }
+  if (S.msg) $app.append(h("div", {class: "banner", text: S.msg}));
+  if (!fs.length) { $app.append(h("div", {class: "empty"}, h("p", {text: "Aucune fiche dans ce dossier."}))); return; }
+  $app.append(h("div", {class: "cards"}, fs.map(x => ficheCard(x.id, x.data))));
+}
+
+/* ---------- fiche ---------- */
+function renderFiche() {
+  const fi = S.cur; if (!fi) return;
+  S.needRefresh = false;
+  const back = fi.dossier && dosName(fi.dossier) ? fi.dossier : "";
+  const sel = h("select", {"aria-label": "Dossier", style: "width:auto;min-width:160px"}, h("option", {value: "", text: "Sans dossier"}),
+    S.dossiers.map(d => h("option", {value: d.id, text: d.nom || "Dossier"})));
+  sel.value = fi.dossier && dosName(fi.dossier) ? fi.dossier : "";
+  sel.addEventListener("change", () => { fi.dossier = sel.value || null; schedule(); renderFiche(); });
+  const del_ = S.confirmDel
+    ? h("span", {class: "confirm"}, h("span", {class: "small", text: "Supprimer définitivement ?"}),
+      h("button", {class: "btn danger", onclick: delFiche}, "Oui, supprimer"), h("button", {class: "btn ghost", onclick: () => { S.confirmDel = false; renderFiche(); }}, "Annuler"))
+    : h("button", {class: "btn ghost danger", onclick: () => { S.confirmDel = true; renderFiche(); }}, "Supprimer");
+  $app.replaceChildren(h("div", {class: "bar-actions"},
+    h("button", {class: "btn ghost", onclick: () => { location.hash = back; }}, "← " + (back ? dosName(back) : "Dossiers")),
+    h("button", {class: "btn pri", onclick: exportXlsx}, "Exporter en Excel"),
+    S.ro ? null : h("button", {class: "btn", onclick: duplicate}, "Dupliquer"), S.ro ? null : h("label", {class: "small", style: "display:flex;gap:6px;align-items:center"}, "Dossier", sel), S.ro ? null : del_,
+    h("span", {class: "saved", id: "saved", text: S.savedMsg})));
+  if (S.msg) $app.append(h("div", {class: "banner", text: S.msg}));
+  $app.append(h("div", {id: "tk"}), h("div", {id: "al", class: "alerts"}));
+  renderTop();
+  const secs = schemaOf(fi).filter(s => modOn(fi, s.mod));
+  if (!S.ro && JSON.stringify(schemaOf(fi)) !== JSON.stringify(SC())) $app.insertBefore(h("div", {class: "banner"}, "Cette fiche utilise une ancienne version du modèle. ",
+    h("button", {class: "btn", style: "margin-left:8px", onclick: () => { fi.schema = clone(SC()); S.cur = merge(fi); schedule(); renderFiche(); }}, "Passer au modèle actuel")), document.getElementById("tk"));
+  if (!secs.find(s => s.id === S.tab)) S.tab = secs[0].id;
+  $app.append(h("div", {class: "tabs", role: "tablist"}, secs.map(s => h("button", {class: "tab", role: "tab", "aria-selected": String(s.id === S.tab), style: "--tc:" + s.c,
+    onclick: () => { S.tab = s.id; renderFiche(); }}, s.t))));
+  const sec = secs.find(s => s.id === S.tab);
+  $app.append(h("div", {id: "sec", style: "--tc:" + sec.c}, sec.blocks.filter(b => modOn(fi, b.mod)).map(b => renderBlock(fi, b))));
+  updateCalcs();
+  if (S.ro) { for (const e of $app.querySelectorAll("#sec input,#sec select,#sec textarea,#sec .chip,#sec .mod,#sec .x")) e.disabled = true; for (const e of $app.querySelectorAll("#sec .addrow")) e.remove(); }
+}
+function renderTop() {
+  const fi = S.cur, f = fi.f, p = progress(fi), st = statut(fi, p.global);
+  const tk = document.getElementById("tk"), al = document.getElementById("al"); if (!tk) return;
+  const pills = [frD(f.date), f.hdeb && f.hfin ? f.hdeb + " → " + f.hfin + " · " + duree(f) : "", f.lstat !== undefined ? lieuTxt(f) : "", f.cap ? f.cap + " pers." : "", f.age].filter(Boolean);
+  const bars = h("div", {class: "bars"});
+  for (const s of schemaOf(fi)) if (p[s.id] != null) bars.append(h("div", {class: "bar"}, h("span", {text: s.t}), h("i", null, h("b", {style: "width:" + Math.round(p[s.id] * 100) + "%"})), h("span", {text: Math.round(p[s.id] * 100) + " %"})));
+  const d = parseD(f.date), jj = d ? Math.round((d - today()) / 864e5) : null;
+  tk.replaceChildren(h("div", {class: "ticket"},
+    h("div", {class: "main"}, fi.dossier && dosName(fi.dossier) ? h("div", {class: "kicker", text: dosName(fi.dossier)}) : null, h("h2", {text: f.nom || "Sans nom"}), h("div", {class: "pills"}, pills.map(x => h("span", {class: "pill", text: x}))), bars),
+    h("div", {class: "stub"}, h("span", {class: "small", style: "color:rgba(255,255,255,.75)", text: "Avancement"}),
+      h("span", {class: "big", text: Math.round(p.global * 100) + " %"}), h("span", {class: "status", text: st}),
+      jj != null ? h("span", {style: "font-size:14px;opacity:.85", text: jj > 0 ? "J-" + jj : jj === 0 ? "C'est ce soir" : "Passé"}) : null)));
+  const a = alerts(fi);
+  al.replaceChildren(...(a.length ? a.map(x => h("span", {class: "alert", text: x})) : [h("span", {class: "alert okk", text: "Rien à signaler"})]));
+}
+function renderBlock(fi, b) {
+  const el = h("section", {class: "block"}, h("h3", null, b.t));
+  if (b.note) el.append(h("div", {class: "bnote", text: b.note}));
+  if (b.special === "modules") {
+    const ml = modsList(fi);
+    el.append(h("div", {class: "bnote", text: "N/A : la partie disparaît de la fiche et de l'export. Rien n'est effacé, il suffit de remettre Oui. Pour qu'une partie apparaisse ici, coche « Optionnel » dans le modèle."}),
+      h("div", {class: "mods"}, ml.map(([k, l]) => h("button", {class: "mod", "aria-pressed": String(modOn(fi, k)),
+        onclick: () => { fi.mods[k] = !modOn(fi, k); schedule(); renderFiche(); }}, h("span", {text: l}), h("b", {text: modOn(fi, k) ? "Oui" : "N/A"})))));
+    return el;
+  }
+  if (b.special === "besoinsp") {
+    const l = rows(fi, "besoins").filter(r => r.par === "Partenaire" && r.besoin);
+    el.append(h("div", {class: "plist"}, l.length ? l.map(r => h("div", null, h("span", {text: r.besoin + (r.qte ? " × " + r.qte : "")}), h("span", {class: cls(r.statut), style: "padding:0 8px;border-radius:6px", text: r.statut || "À trouver"})))
+      : h("span", {class: "small", text: "Aucun besoin marqué « Partenaire » dans l'onglet Opérationnel."})));
+    return el;
+  }
+  if (b.fields && b.fields.length) {
+    const g = h("div", {class: "fields"});
+    for (const x of b.fields) g.append(fieldEl(fi, x));
+    if (b.id === "carte") { const i = b.fields.findIndex(x => x.k === "cap"); g.insertBefore(h("div", {class: "fld"}, h("label", {text: "Durée (calculée)"}), h("div", {class: "auto", "data-calc": "duree"})), g.children[i < 0 ? g.children.length : i] || null); }
+    el.append(g);
+  }
+  if (b.table) el.append(tableEl(fi, b));
+  return el;
+}
+function bindVal(e, set) {
+  e.addEventListener(e.tagName === "SELECT" ? "change" : "input", () => { set(e.value); schedule(); renderTop(); updateCalcs(); });
+  e.addEventListener("blur", () => { if (S.needRefresh && !S.dirty) setTimeout(() => { if (!document.activeElement || !document.activeElement.matches("input,select,textarea")) renderFiche(); }, 0); });
+}
+function inputEl(ty, val, op, label) {
+  let e;
+  if (ty === "select" || ty === "note") {
+    e = h("select", {"aria-label": label}, h("option", {value: "", text: ""}), (ty === "note" ? ["1", "2", "3", "4", "5"] : op || []).map(o => h("option", {value: o, text: o})));
+    if (val && ty === "select" && !(op || []).includes(val)) e.append(h("option", {value: val, text: val}));
+    e.value = val || ""; e.dataset.color = ty;
+  } else if (ty === "area") { e = h("textarea", {"aria-label": label}); e.value = val || ""; }
+  else { e = h("input", {type: ["number", "date", "time"].includes(ty) ? ty : "text", "aria-label": label}); if (ty === "number") e.setAttribute("inputmode", "decimal"); e.value = val ?? ""; }
+  return e;
+}
+function fieldEl(fi, x) {
+  const id = "f_" + x.k;
+  const wrap = h("div", {class: "fld" + (x.ty === "area" || x.ty === "multi" ? " wide" : ""), "data-cond": x.cond || null}, h("label", {for: id, text: x.l}));
+  if (x.ty === "multi") {
+    const v = Array.isArray(fi.f[x.k]) ? fi.f[x.k] : [];
+    wrap.append(h("div", {class: "chips", id}, (x.op || []).map(o => h("button", {class: "chip", "aria-pressed": String(v.includes(o)), onclick: ev => {
+      const cur = Array.isArray(fi.f[x.k]) ? fi.f[x.k] : (fi.f[x.k] = []);
+      const i = cur.indexOf(o); i < 0 ? cur.push(o) : cur.splice(i, 1);
+      ev.currentTarget.setAttribute("aria-pressed", String(i < 0)); schedule();
+    }}, o))));
+    return wrap;
+  }
+  const e = inputEl(x.ty, fi.f[x.k], x.op, x.l); e.id = id;
+  bindVal(e, v => { fi.f[x.k] = v; }); wrap.append(e); return wrap;
+}
+function tableEl(fi, b) {
+  const tb = b.table, data = fi.t[b.id] || (fi.t[b.id] = []);
+  const table = h("table", {class: "stack"}, h("thead", null, h("tr", null, tb.cols.map(c => h("th", {text: c.l})), tb.fixed ? null : h("th", {"aria-label": "Supprimer"}))));
+  const body = h("tbody");
+  data.forEach((r, i) => {
+    const tr = h("tr");
+    for (const c of tb.cols) {
+      if (c.ty === "calc") { tr.append(h("td", {class: "calc", "data-l": c.l, "data-calc": c.k, "data-tb": b.id, "data-i": String(i)})); continue; }
+      if (c.ty === "ro") { tr.append(h("td", {"data-l": c.l, text: r[c.k] || ""})); continue; }
+      const e = inputEl(c.ty, r[c.k], c.op, c.l); bindVal(e, v => { r[c.k] = v; }); tr.append(h("td", {"data-l": c.l}, e));
+    }
+    if (!tb.fixed) tr.append(h("td", {class: "rm"}, h("button", {class: "x", "aria-label": "Supprimer la ligne", title: "Supprimer la ligne", onclick: () => { data.splice(i, 1); schedule(); renderFiche(); }}, "×")));
+    body.append(tr);
+  });
+  table.append(body);
+  const out = h("div");
+  if (tb.cols.some(c => c.ty === "note")) out.append(h("div", {class: "legend"}, ["Critique", "Faible", "Moyen", "Bien", "Très bien"].map((x, i) => h("span", {class: "n" + (i + 1), text: (i + 1) + " = " + x}))));
+  out.append(h("div", {class: "tw"}, table));
+  if (!tb.fixed) out.append(h("button", {class: "btn addrow", onclick: () => { data.push({}); schedule(); renderFiche(); }}, "+ Ajouter une ligne"));
+  return out;
+}
+function updateCalcs() {
+  const fi = S.cur; if (!fi) return;
+  for (const e of $app.querySelectorAll("[data-calc]")) {
+    const c = e.dataset.calc;
+    if (c === "duree") { e.textContent = duree(fi.f) || "—"; continue; }
+    const r = (fi.t[e.dataset.tb] || [])[+e.dataset.i]; if (!r) continue;
+    if (c === "dl") { const d = deadline(fi, r); e.textContent = d ? frD(d) : ""; e.classList.toggle("c-bad", !!(d && r.etape && parseD(d) < today() && r.statut !== "Terminé")); }
+    else if (c === "ok") { const v = atteint(fi, r); e.textContent = v; e.className = "calc " + (v === "Oui" ? "c-ok" : v === "Non" ? "c-bad" : ""); }
+  }
+  for (const e of $app.querySelectorAll("[data-cond]")) e.hidden = !condOn(fi, e.dataset.cond);
+  for (const e of $app.querySelectorAll("select[data-color]")) { e.classList.remove("c-ok", "c-mid", "c-bad", "c-na", "n1", "n2", "n3", "n4", "n5"); const c = cls(e.value, e.dataset.color === "note"); if (c) e.classList.add(c); }
+}
+
+/* ---------- modèle modifiable ---------- */
+const FTYPES = [["text", "Texte"], ["area", "Texte long"], ["number", "Nombre"], ["date", "Date"], ["time", "Heure"], ["select", "Liste"], ["multi", "Choix multiples"]];
+const CTYPES = [["text", "Texte"], ["number", "Nombre"], ["date", "Date"], ["time", "Heure"], ["select", "Liste"], ["note", "Note /5"]];
+function mdirty() { S.modelDirty = true; S.modelMsg = "Modifications non enregistrées"; const b = document.getElementById("msave"); if (b) b.disabled = false; const m = document.getElementById("mmsg"); if (m) m.textContent = S.modelMsg; }
+function move(a, i, d) { const j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; mdirty(); renderModele(); }
+function del(a, i) { a.splice(i, 1); mdirty(); renderModele(); }
+function txt(val, label, set, extra) { const e = h("input", {"aria-label": label, placeholder: label, ...(extra || {})}); e.value = val || ""; e.addEventListener("input", () => { set(e.value); mdirty(); }); return e; }
+function typeSel(list, val, label, set) { const e = h("select", {"aria-label": label}, list.map(([v, l]) => h("option", {value: v, text: l}))); e.value = val; e.addEventListener("change", () => { set(e.value); mdirty(); renderModele(); }); return e; }
+function tools(a, i, locked) { return h("span", {class: "mtools"}, h("button", {class: "x", title: "Monter", "aria-label": "Monter", onclick: () => move(a, i, -1)}, "↑"), h("button", {class: "x", title: "Descendre", "aria-label": "Descendre", onclick: () => move(a, i, 1)}, "↓"), locked ? null : h("button", {class: "x", title: "Supprimer", "aria-label": "Supprimer", onclick: () => del(a, i)}, "×")); }
+const opsTxt = (x, label) => txt((x.op || []).join(", "), label || "Options, séparées par des virgules", v => { x.op = v.split(",").map(s => s.trim()).filter(Boolean); }, {class: "wide-in"});
+async function saveModele() {
+  for (const s of S.model) { if (!s.t.trim()) { S.modelMsg = "Un onglet n'a pas de nom."; renderModele(); return; } for (const b of s.blocks) if (!b.t.trim()) { S.modelMsg = "Un bloc de l'onglet « " + s.t + " » n'a pas de nom."; renderModele(); return; } }
+  const ok = await put("config/modele", {schema: clone(S.model), updatedAt: Date.now()});
+  if (ok) { if (!S.db) S.schema = clone(S.model); S.modelDirty = false; S.modelMsg = "Modèle enregistré : les nouvelles fiches l'utiliseront."; renderModele(); }
+}
+function renderModele() {
+  if (S.ro || S.noModel) { $app.replaceChildren(header("Modèle de fiche"), h("div", {class: "banner", text: "Seules les personnes qui gèrent les fiches peuvent modifier le modèle."}), h("button", {class: "btn", onclick: () => { location.hash = ""; }}, "← Dossiers")); return; }
+  const M = S.model || (S.model = clone(SC()));
+  S.msec = Math.max(0, Math.min(S.msec, M.length - 1));
+  $app.replaceChildren(h("div", {class: "bar-actions"}, h("button", {class: "btn ghost", onclick: () => { location.hash = ""; }}, "← Dossiers"),
+    h("button", {class: "btn pri", id: "msave", disabled: !S.modelDirty, onclick: saveModele}, "Enregistrer le modèle"),
+    S.modelDirty ? h("button", {class: "btn ghost", onclick: () => { S.model = clone(SC()); S.modelDirty = false; S.modelMsg = ""; renderModele(); }}, "Annuler les changements") : null,
+    h("button", {class: "btn ghost", onclick: () => { S.model = clone(DEF); mdirty(); renderModele(); }}, "Revenir au modèle d'origine"),
+    h("span", {class: "saved", id: "mmsg", text: S.modelMsg})));
+  $app.append(header("Modèle de fiche"), h("p", {class: "small", style: "margin-top:-8px", text: "Ce que tu changes ici s'applique aux nouvelles fiches, après « Enregistrer le modèle ». Les fiches déjà créées gardent leur version ; dans une fiche, le bouton « Passer au modèle actuel » la met à jour si tu le veux. Rien de ce qui est déjà écrit n'est effacé."}));
+  if (S.msg) $app.append(h("div", {class: "banner", text: S.msg}));
+  $app.append(h("div", {class: "tabs"}, M.map((s, i) => h("button", {class: "tab", "aria-selected": String(i === S.msec), style: "--tc:" + s.c, onclick: () => { S.msec = i; renderModele(); }}, s.t || "Sans nom")),
+    h("button", {class: "tab", onclick: () => { M.push({id: uid("s"), t: "Nouvel onglet", c: "#3A7CA5", mod: null, blocks: []}); S.msec = M.length - 1; mdirty(); renderModele(); }}, "+ Onglet")));
+  const s = M[S.msec], first = S.msec === 0;
+  const color = h("input", {type: "color", "aria-label": "Couleur de l'onglet", style: "width:56px;padding:2px"}); color.value = s.c || "#3A7CA5";
+  color.addEventListener("input", () => { s.c = color.value; mdirty(); });
+  const optS = h("input", {type: "checkbox", style: "width:22px;min-height:22px"}); optS.checked = !!s.mod;
+  optS.addEventListener("change", () => { s.mod = optS.checked ? (s.mod || (s.id === "commercial" ? "comm" : s.id)) : null; mdirty(); });
+  const box = h("div", {style: "--tc:" + (s.c || "#3A7CA5")},
+    h("div", {class: "block"}, h("h3", null, "Onglet"), h("div", {class: "mrow"}, txt(s.t, "Nom de l'onglet", v => { s.t = v; }), color,
+      first ? null : h("label", {class: "mchk"}, optS, "Optionnel (N/A possible)"), first ? h("span", {class: "small", text: "Premier onglet"}) : tools(M, S.msec))));
+  s.blocks.forEach((b, j) => {
+    const opt = h("input", {type: "checkbox", style: "width:22px;min-height:22px"}); opt.checked = !!b.mod;
+    opt.addEventListener("change", () => { b.mod = opt.checked ? (b.mod || (b.id === "concept_team" ? "concept" : b.id)) : null; mdirty(); });
+    const card = h("section", {class: "block"}, h("h3", null, b.special ? "Bloc automatique" : b.table && !b.fields ? "Tableau" : "Bloc"),
+      h("div", {class: "mrow"}, txt(b.t, "Titre du bloc", v => { b.t = v; }), b.special ? null : h("label", {class: "mchk"}, opt, "Optionnel"), tools(s.blocks, j)));
+    if (b.special) card.append(h("div", {class: "bnote", style: "padding-bottom:12px", text: "Ce bloc se remplit tout seul : tu peux le renommer, le déplacer ou le retirer."}));
+    if (b.fields) {
+      const list = h("div", {class: "mlist"}, h("div", {class: "mhead", text: "Cases"}));
+      b.fields.forEach((x, k) => list.append(h("div", {class: "mrow"}, txt(x.l, "Nom de la case", v => { x.l = v; }), typeSel(FTYPES, x.ty, "Type", v => { x.ty = v; }),
+        x.ty === "select" || x.ty === "multi" ? opsTxt(x) : null, tools(b.fields, k))));
+      list.append(h("button", {class: "btn addrow", style: "margin:6px 0 0", onclick: () => { b.fields.push({k: uid("k"), l: "Nouvelle case", ty: "text", op: []}); mdirty(); renderModele(); }}, "+ Case"));
+      card.append(list);
+    }
+    if (b.table) {
+      const list = h("div", {class: "mlist"}, h("div", {class: "mhead", text: "Colonnes du tableau"}));
+      b.table.cols.forEach((c, k) => list.append(h("div", {class: "mrow"}, txt(c.l, "Nom de la colonne", v => { c.l = v; }),
+        c.ty === "calc" || c.ty === "ro" ? h("span", {class: "small", text: c.ty === "calc" ? "Calcul automatique" : "Texte fixe"}) : typeSel(CTYPES, c.ty, "Type", v => { c.ty = v; }),
+        c.ty === "select" ? opsTxt(c) : null, tools(b.table.cols, k, c.ty === "calc"))));
+      list.append(h("button", {class: "btn addrow", style: "margin:6px 0 0", onclick: () => { b.table.cols.push({k: uid("k"), l: "Nouvelle colonne", ty: "text", op: []}); mdirty(); renderModele(); }}, "+ Colonne"));
+      const fk = (b.table.cols[0] || {}).k;
+      if (fk) {
+        const ta = h("textarea", {"aria-label": "Lignes de départ", style: "min-height:110px"}); ta.value = (b.table.rows || []).map(r => r[fk] || "").join("\n");
+        ta.addEventListener("input", () => { const old = b.table.rows || []; b.table.rows = ta.value.split("\n").map(x => x.trim()).filter(Boolean).map(l => old.find(r => r[fk] === l) || {[fk]: l}); mdirty(); });
+        list.append(h("div", {class: "mhead", text: "Lignes de départ des nouvelles fiches (une par ligne, 1re colonne)"}), ta);
+      }
+      card.append(list);
+    }
+    box.append(card);
+  });
+  box.append(h("div", {class: "mrow", style: "margin-bottom:14px"},
+    h("button", {class: "btn", onclick: () => { s.blocks.push({id: uid("b"), t: "Nouveau bloc", mod: null, fields: [{k: uid("k"), l: "Nouvelle case", ty: "text", op: []}]}); mdirty(); renderModele(); }}, "+ Bloc de cases"),
+    h("button", {class: "btn", onclick: () => { s.blocks.push({id: uid("b"), t: "Nouveau tableau", mod: null, table: {fixed: false, rows: [], cols: [{k: uid("k"), l: "Colonne 1", ty: "text", op: []}, {k: uid("k"), l: "Statut", ty: "select", op: ["À faire", "En cours", "Fait"]}]}}); mdirty(); renderModele(); }}, "+ Tableau")));
+  $app.append(box);
+}
+
+/* ---------- export Excel (mis en forme) ---------- */
+function disp(ty, v) { if (Array.isArray(v)) return v.join(", "); if (ty === "date") return frD(v); if (ty === "number" && v !== "" && v != null && !isNaN(+v)) return +v; return v ?? ""; }
+const XC = {ok: ["DCFCE7", "166534"], mid: ["FEF3C7", "92400E"], bad: ["FEE2E2", "991B1B"], na: ["F1F3F5", "6B7280"],
+  n1: ["DC2626", "FFFFFF"], n2: ["F97316", "FFFFFF"], n3: ["FACC15", "000000"], n4: ["4ADE80", "000000"], n5: ["15803D", "FFFFFF"]};
+function hx(c) { return (c || "#1E3A5F").replace("#", "").toUpperCase(); }
+function tintX(c, k) { const n = parseInt(hx(c), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return [r, g, b].map(x => Math.round(x + (255 - x) * k).toString(16).padStart(2, "0")).join("").toUpperCase(); }
+async function exportXlsx() {
+  const fi = S.cur;
+  if (!window.ExcelJS) { note("L'export Excel n'a pas pu se charger. Recharge la page."); return; }
+  const sc = schemaOf(fi), p = progress(fi), f = fi.f;
+  const wb = new ExcelJS.Workbook(); wb.creator = "Fiches ID B2S";
+  const thin = {style: "thin", color: {argb: "FFD0D7E0"}};
+  const box = {top: thin, left: thin, bottom: thin, right: thin};
+  const fillOf = c => ({type: "pattern", pattern: "solid", fgColor: {argb: "FF" + c}});
+  const used = new Set();
+  const sub = [dosName(fi.dossier), frD(f.date), f.hdeb && f.hfin ? f.hdeb + " → " + f.hfin : "", lieuTxt(f)].filter(Boolean).join("   ·   ");
+  for (const s of sc) {
+    if (!modOn(fi, s.mod)) continue;
+    let name = (s.t || "Onglet").replace(/[\\/?*[\]:]/g, " ").slice(0, 28).trim() || "Onglet", n = name, i = 2;
+    while (used.has(n)) n = name + " " + i++; used.add(n);
+    const col = hx(s.c), light = tintX(s.c, 0.82);
+    const ws = wb.addWorksheet(n, {properties: {tabColor: {argb: "FF" + col}}, views: [{state: "frozen", ySplit: 2, showGridLines: false}],
+      pageSetup: {orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0}});
+    const maxCols = Math.max(5, ...s.blocks.filter(b => b.table).map(b => b.table.cols.length));
+    const last = 1 + maxCols;
+    ws.columns = [{width: 3}, {width: 30}, ...Array.from({length: maxCols - 1}, (_, k) => ({width: k === 0 ? 26 : 18}))];
+    const band = (r, text, bg, fg, size, h) => {
+      ws.mergeCells(r, 2, r, last); const c = ws.getCell(r, 2); c.value = text;
+      c.font = {name: "Arial", bold: true, size, color: {argb: "FF" + fg}}; c.alignment = {vertical: "middle", indent: 1};
+      for (let k = 2; k <= last; k++) ws.getCell(r, k).fill = fillOf(bg);
+      ws.getRow(r).height = h;
+    };
+    band(1, s.t.toUpperCase() + " — " + (f.nom || "Sans nom"), col, "FFFFFF", 15, 30);
+    ws.mergeCells(2, 2, 2, last); ws.getCell(2, 2).value = sub; ws.getCell(2, 2).font = {name: "Arial", italic: true, size: 10, color: {argb: "FF5B6878"}};
+    ws.getRow(2).height = 20;
+    let r = 4;
+    const fieldRow = (label, value, color) => {
+      const l = ws.getCell(r, 2); l.value = label; l.font = {name: "Arial", bold: true, size: 10, color: {argb: "FF334155"}};
+      l.fill = fillOf("F2F4F6"); l.border = box; l.alignment = {vertical: "middle", wrapText: true};
+      ws.mergeCells(r, 3, r, Math.min(last, 6)); const v = ws.getCell(r, 3); v.value = value;
+      v.font = {name: "Arial", size: 10, bold: !!color, color: {argb: "FF" + (color ? color[1] : "18222E")}};
+      v.alignment = {vertical: "middle", wrapText: true}; if (typeof value === "number") v.numFmt = "#,##0";
+      for (let k = 3; k <= Math.min(last, 6); k++) { ws.getCell(r, k).border = box; if (color) ws.getCell(r, k).fill = fillOf(color[0]); }
+      const len = String(value ?? "").length; ws.getRow(r).height = len > 70 ? Math.min(90, 15 * Math.ceil(len / 70)) : 18;
+      r++;
+    };
+    const clsKey = (v, note) => { const c = cls(v, note); return c ? c.replace("c-", "") : ""; };
+    if (s === sc[0]) {
+      band(r++, "EN BREF", light, col, 11, 22);
+      fieldRow("Statut", statut(fi, p.global), XC[clsKey(statut(fi, p.global))] || null);
+      fieldRow("Avancement global", Math.round(p.global * 100) + " %");
+      for (const x of sc) if (p[x.id] != null && x !== s) fieldRow("Avancement " + x.t, Math.round(p[x.id] * 100) + " %");
+      if (duree(f)) fieldRow("Durée", duree(f));
+      const al = alerts(fi);
+      fieldRow("Alertes", al.length ? al.join("\n") : "Rien à signaler", al.length ? XC.bad : XC.ok);
+      r++;
+    }
+    for (const b of s.blocks) {
+      if (!modOn(fi, b.mod) || b.special === "modules") continue;
+      band(r++, b.t.toUpperCase(), col, "FFFFFF", 11, 22);
+      if (b.special === "besoinsp") {
+        const l = rows(fi, "besoins").filter(x => x.par === "Partenaire" && x.besoin);
+        if (!l.length) fieldRow("Besoins", "Aucun besoin marqué « Partenaire »");
+        for (const x of l) fieldRow(x.besoin + (x.qte ? " × " + x.qte : ""), x.statut || "À trouver", XC[clsKey(x.statut || "À trouver")] || null);
+      }
+      for (const x of (b.fields || [])) if (condOn(fi, x.cond)) fieldRow(x.l, disp(x.ty, f[x.k]), x.ty === "select" ? XC[clsKey(f[x.k])] || null : null);
+      if (b.table) {
+        const cols = b.table.cols;
+        cols.forEach((c, k) => { const h_ = ws.getCell(r, 2 + k); h_.value = c.l; h_.font = {name: "Arial", bold: true, size: 10, color: {argb: "FF" + col}};
+          h_.fill = fillOf(light); h_.border = box; h_.alignment = {vertical: "middle", horizontal: "center", wrapText: true}; });
+        ws.getRow(r).height = 22; r++;
+        const data = (fi.t[b.id] || []).filter(x => b.table.fixed || cols.slice(1).some(c => c.ty !== "calc" && c.ty !== "ro" && x[c.k] !== undefined && x[c.k] !== "" && !(Array.isArray(x[c.k]) && !x[c.k].length)));
+        const shown = data.length ? data : [{}];
+        for (const x of shown) {
+          let tall = 18;
+          cols.forEach((c, k) => {
+            const v = c.ty === "calc" ? (c.k === "dl" ? frD(deadline(fi, x)) : atteint(fi, x)) : disp(c.ty, x[c.k]);
+            const cell = ws.getCell(r, 2 + k); cell.value = v; cell.border = box;
+            cell.alignment = {vertical: "middle", wrapText: true, horizontal: typeof v === "number" ? "right" : "left"};
+            let ck = "";
+            if (c.ty === "note") ck = x[c.k] ? "n" + x[c.k] : "";
+            else if (c.ty === "select") ck = clsKey(x[c.k]);
+            else if (c.ty === "calc") ck = v === "Oui" ? "ok" : v === "Non" ? "bad" : (c.k === "dl" && v && parseD(deadline(fi, x)) < today() && x.statut !== "Terminé" ? "bad" : "");
+            const cc = XC[ck];
+            cell.font = {name: "Arial", size: 10, bold: !!cc, color: {argb: "FF" + (cc ? cc[1] : "18222E")}};
+            if (cc) cell.fill = fillOf(cc[0]);
+            if (typeof v === "number") cell.numFmt = "#,##0";
+            const len = String(v ?? "").length; if (len > 28) tall = Math.max(tall, Math.min(75, 15 * Math.ceil(len / 28)));
+          });
+          ws.getRow(r).height = tall; r++;
+        }
+        if (!data.length) ws.getCell(r - 1, 2).value = "Rien de renseigné";
+      }
+      r++;
+    }
+  }
+  const data = await wb.xlsx.writeBuffer();
+  const dl = await claude.use("downloads").catch(() => null);
+  if (!dl) { note("Le téléchargement n'est pas disponible dans cette vue. Ouvre la page dans claude.ai sur un navigateur."); return; }
+  const fname = ("Fiche ID - " + (f.nom || "événement")).replace(/[\\/:*?"<>|«»]/g, "").replace(/\s+/g, " ").trim() + ".xlsx";
+  try { await dl.save({filename: fname, data}); }
+  catch (e) { if (e.code !== "declined") note(e.code === "host_unavailable" ? "Cette app ne peut pas enregistrer de fichier : ouvre la page sur un ordinateur." : "Export impossible (" + e.code + ")."); }
+}
+
+/* ---------- version fichier local (sans claude.ai) ---------- */
+if (!window.claude) {
+  S.local = true;
+  const KEY = "fichesB2S_v1", subs = [];
+  let mem = null;
+  const load = () => { if (mem) return mem; try { mem = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { mem = null; }
+    if (!mem) { mem = {}; for (const d of DEMO_DOS) mem["dossiers/" + d.id] = {nom: d.nom, createdAt: Date.now()}; for (const x of DEMO) mem["fiches/" + x.id] = clone(x.data); save(); }
+    return mem; };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch (e) {} };
+  const emit = () => { const m = load(); for (const s_ of subs) {
+    if (s_.doc) { const d = m[s_.path]; s_.n({exists: !!d, data: () => d, metadata: {fromCache: false}}); }
+    else { const docs = Object.keys(m).filter(p => p.startsWith(s_.path + "/") && p.split("/").length === 2).map(p => ({id: p.split("/")[1], exists: true, data: () => m[p]})); s_.n({docs, metadata: {fromCache: false}}); } } };
+  const localDb = {
+    collection: p => ({onSnapshot: n => { subs.push({path: p, n}); setTimeout(emit, 0); return () => {}; }}),
+    doc: p => ({onSnapshot: n => { subs.push({path: p, n, doc: 1}); setTimeout(emit, 0); return () => {}; },
+      set: async d => { load()[p] = clone(d); save(); setTimeout(emit, 0); }, delete: async () => { delete load()[p]; save(); setTimeout(emit, 0); }})};
+  const localDl = {save: async ({filename, data}) => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data])); a.download = filename; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); return {status: "saved"}; }};
+  window.claude = {use: async n => n === "db" ? localDb : n === "downloads" ? localDl : n === "user" ? {can: async () => true, canEdit: async () => true} : null};
+  window.backup = () => localDl.save({filename: "Sauvegarde fiches ID " + isoD(new Date()) + ".json", data: JSON.stringify(load(), null, 1)});
+  window.restore = async file => {
+    if (!file) return;
+    try { const d = JSON.parse(await file.text()); if (!d || typeof d !== "object") throw 0; mem = d; save(); emit(); note("Sauvegarde importée."); }
+    catch (e) { note("Ce fichier n'est pas une sauvegarde de fiches ID."); }
+  };
+}
+var backup = window.backup || (() => {}), restore = window.restore || (() => {});
+window.addEventListener("hashchange", route);
+route();
+connect();
+
+}
+</script>
+</body>
+</html>
